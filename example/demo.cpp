@@ -28,16 +28,21 @@ int main() {
         e->getSoundManager()->getSound("helloWorld")->play();
     }));
 
-    engine::addTexture("container_diffuse", new texture2d("container_diffuse.png", GL_RGBA));
-    engine::addTexture("container_specular", new texture2d("container_specular.png", GL_RGBA));
-    engine::addShader("phonglit", new shader("phonglit.vsh", "phonglit.fsh"));
-    engine::addMaterial("phonglit", new phongMaterial{"phonglit", "container_diffuse", "container_specular"});
-    engine::addMesh("cube", new mesh(&objMeshLoader, "teapot.obj", "phonglit"));
+    engine.addInitFunction([&objMeshLoader](class engine* e) {
+        engine::addTexture("container_diffuse", new texture2d("container_diffuse.png", GL_RGBA));
+        engine::addTexture("container_specular", new texture2d("container_specular.png", GL_RGBA));
+        engine::addShader("phonglit", new shader("phonglit.vsh", "phonglit.fsh"));
+        engine::addMaterial("phonglit", new phongMaterial{"phonglit", "container_diffuse", "container_specular"});
+        engine::addMesh("cube", new mesh(&objMeshLoader, "teapot.obj", "phonglit"));
 
-    engine.addInitFunction([](class engine* e) {
         e->captureMouse(true);
         e->setWorld(new world{e, new freecam{e}});
         e->getWorld()->addMesh("cube");
+        e->getWorld()->addLight(new directionalLight{
+            glm::vec3{0.0f, 0.0f, 0.0f},
+            glm::vec3{0.1, 0.1, 0.1},
+            glm::vec3{1.0f, 1.0f, 1.0f},
+            glm::vec3{1.0f, 1.0f, 1.0f}});
 
         bool angelscriptEnabled = true;
         e->getSettingsLoader()->getValue("scripting", "angelscript", &angelscriptEnabled);
@@ -48,14 +53,6 @@ int main() {
         auto* sound = new oggFileSound();
         sound->init("helloWorldCutMono.ogg");
         e->getSoundManager()->addSound("helloWorld", sound);
-
-        ((phongMaterial*) engine::getMaterial("phonglit"))->setShininess();
-        ((phongMaterial*) engine::getMaterial("phonglit"))->setLambertFactor();
-        engine::getShader("phonglit")->use();
-        engine::getShader("phonglit")->setUniform("light.ambient", 0.1f, 0.1f, 0.1f);
-        engine::getShader("phonglit")->setUniform("light.diffuse", 1.0f, 1.0f, 1.0f);
-        engine::getShader("phonglit")->setUniform("light.specular", 1.0f, 1.0f, 1.0f);
-        engine::getShader("phonglit")->setUniform("light.position", 0.0f, 5.0f, 0.0f);
 
 #if DEBUG
         engine::setBackgroundColor(0.0f, 0.0f, 0.3f, 1.0f);
