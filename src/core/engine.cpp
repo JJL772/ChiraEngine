@@ -136,7 +136,7 @@ void engine::init() {
     this->settingsLoader->getValue("graphics", "windowHeight", &windowHeight);
     bool fullscreen = false;
     this->settingsLoader->getValue("graphics", "fullscreen", &fullscreen);
-    std::string title = "Basic Game Engine";
+    std::string title = "Chira Engine";
     this->settingsLoader->getValue("engine", "title", &title);
     this->window = glfwCreateWindow(windowWidth,
                                     windowHeight,
@@ -221,7 +221,7 @@ void engine::init() {
         this->settingsLoader->getValue("engine", "maxPointLights", &maxLights);
         shaderFile::addPreprocessorSymbol("MAX_POINT_LIGHTS", std::to_string(maxLights));
     }
-    if (this->settingsLoader->hasValue("engine", "maxPointLights")) {
+    if (this->settingsLoader->hasValue("engine", "maxDirectionalLights")) {
         int maxLights;
         this->settingsLoader->getValue("engine", "maxDirectionalLights", &maxLights);
         shaderFile::addPreprocessorSymbol("MAX_DIRECTIONAL_LIGHTS", std::to_string(maxLights));
@@ -231,19 +231,18 @@ void engine::init() {
         this->settingsLoader->getValue("engine", "maxSpotLights", &maxLights);
         shaderFile::addPreprocessorSymbol("MAX_SPOT_LIGHTS", std::to_string(maxLights));
     }
+
+    this->callRegisteredFunctions(&(this->initFunctions));
+
     for (const auto& [name, object] : engine::shaders) {
         object->compile();
     }
-
     for (const auto& [name, object] : engine::textures) {
         object->compile();
     }
     for (const auto& [name, object] : engine::materials) {
         object->compile();
     }
-
-    this->callRegisteredFunctions(&(this->initFunctions));
-
     for (const auto& [name, scriptProvider] : this->scriptProviders) {
         scriptProvider->initProvider();
 
@@ -461,6 +460,7 @@ world* engine::getWorld() {
 void engine::setWorld(class world* newWorld) {
     this->worldPtr.reset(newWorld);
     this->worldPtr->compile();
+    this->worldPtr->markLightsDirty();
 }
 
 void engine::setSettingsLoaderDefaults() {
