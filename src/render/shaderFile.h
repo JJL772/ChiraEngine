@@ -4,10 +4,11 @@
 #include <unordered_map>
 #include "../utility/handleObject.h"
 
-const std::string PREPROCESSOR_SYMBOL_PREFIX = "#";
-const std::string PREPROCESSOR_SYMBOL_SUFFIX = "#";
-const std::string PREPROCESSOR_INCLUDE_PREFIX = "//";
-const std::string PREPROCESSOR_INCLUDE_SUFFIX = "\\\\";
+const std::string OPENGL_VERSION_DEFINITION = "#version 330 core\n\n";
+const std::string PREPROCESSOR_SYMBOL_PREFIX = "//`";
+const std::string PREPROCESSOR_SYMBOL_SUFFIX = "`//";
+const std::string PREPROCESSOR_INCLUDE_PREFIX = "//!";
+const std::string PREPROCESSOR_INCLUDE_SUFFIX = "//!";
 
 class shaderFile : public handleObject {
 public:

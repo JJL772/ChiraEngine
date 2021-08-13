@@ -2,8 +2,16 @@
 
 #include <glm/glm.hpp>
 
+enum lightType {
+    ABSTRACT_LIGHT,
+    POINT_LIGHT,
+    DIRECTIONAL_LIGHT,
+    SPOT_LIGHT
+};
+
 struct abstractLight {
     abstractLight(const glm::vec3& position_, const glm::vec3& ambient_, const glm::vec3& diffuse_, const glm::vec3& specular_);
+    lightType type;
     glm::vec3 position;
     glm::vec3 ambient;
     glm::vec3 diffuse;
@@ -23,8 +31,9 @@ struct directionalLight : public abstractLight {
     glm::vec3 direction;
 };
 
-struct spotLight : public directionalLight {
-    spotLight(const glm::vec3& position, const glm::vec3& direction_, const glm::vec3& ambient, const glm::vec3& diffuse, const glm::vec3& specular, float cutoffOuter_, float cutoffInner_, float cutoffDegree_);
+struct spotLight : public pointLight {
+    spotLight(const glm::vec3& position, const glm::vec3& direction_, const glm::vec3& ambient, const glm::vec3& diffuse, const glm::vec3& specular, float constant, float linear, float quadratic, float cutoffOuter_, float cutoffInner_, float cutoffDegree_);
+    glm::vec3 direction;
     float cutoffOuter;
     float cutoffInner;
     float cutoffDegree;

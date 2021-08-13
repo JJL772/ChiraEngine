@@ -10,6 +10,8 @@ public:
     phongMaterial(const std::string& shader_, std::string diffuse_, std::string specular_) : abstractMaterial(shader_), diffuse(std::move(diffuse_)), specular(std::move(specular_)) {
         engine::getTexture(this->diffuse)->setTextureUnit(GL_TEXTURE0);
         engine::getTexture(this->specular)->setTextureUnit(GL_TEXTURE1);
+        this->setShininess();
+        this->setLambertFactor();
     }
     void compile() override {
         engine::getShader(this->shaderName)->use();
@@ -29,9 +31,7 @@ public:
         engine::getShader(this->shaderName)->use();
         engine::getShader(this->shaderName)->setUniform("material.lambertFactor", lambertFactor);
     }
-    void updateLighting(const std::vector<std::unique_ptr<abstractLight>>& lights) override {
-        // todo: pass all lighting info to the material (this one)
-    }
+    void updateLighting(const std::vector<std::unique_ptr<abstractLight>>& lights) override;
 private:
     std::string diffuse;
     std::string specular;

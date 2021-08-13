@@ -5,7 +5,8 @@
 #include <regex>
 #include "../core/virtualFileSystem.h"
 
-// todo: add //filename.glsl\\ preprocessing
+// todo: add //!filename.glsl!\\ file include preprocessing
+
 shaderFile::shaderFile(unsigned int type, const std::string& source, bool isFilePath) : handleObject() {
     this->type = type;
     if (!isFilePath) {
@@ -47,7 +48,7 @@ std::string shaderFile::loadSourceFromFile(const std::string& filepath) {
         for (const auto& [key, value] : shaderFile::preprocessorSymbols) {
             data = std::regex_replace(data.data(), std::regex{key}, value);
         }
-        return data;
+        return OPENGL_VERSION_DEFINITION + data;
     }
 }
 
@@ -67,5 +68,5 @@ unsigned int shaderFile::getType() const {
 }
 
 void shaderFile::addPreprocessorSymbol(const std::string& name, const std::string& value) {
-    shaderFile::preprocessorSymbols[name] = PREPROCESSOR_SYMBOL_PREFIX + value + PREPROCESSOR_SYMBOL_SUFFIX;
+    shaderFile::preprocessorSymbols[PREPROCESSOR_SYMBOL_PREFIX + name + PREPROCESSOR_SYMBOL_SUFFIX] = value;
 }
