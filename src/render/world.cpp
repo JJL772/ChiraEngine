@@ -48,6 +48,10 @@ abstractLight* world::getLight(unsigned int lightId) {
     return this->lights.at(lightId).get();
 }
 
+void world::markLightsDirty() {
+    this->lightsDirty = true;
+}
+
 void world::compile() {
     if (!this->compiled) {
         for (const auto& string : this->meshes) {
@@ -73,8 +77,8 @@ void world::render() {
     for (const auto& string : this->meshes) {
         if (this->lightsDirty) {
             engine::getMesh(string)->getMaterial()->updateLighting(this->lights);
-            this->lightsDirty = false;
         }
         engine::getMesh(string)->render();
     }
+    this->lightsDirty = false;
 }

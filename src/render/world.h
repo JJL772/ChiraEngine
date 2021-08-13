@@ -17,6 +17,7 @@ public:
     void addMesh(const std::string& mesh);
     unsigned int addLight(abstractLight* light);
     abstractLight* getLight(unsigned int lightId);
+    void markLightsDirty();
     void compile() override;
     void discard() override;
     void render();
