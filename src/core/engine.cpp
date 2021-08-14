@@ -232,6 +232,9 @@ void engine::init() {
         this->settingsLoader->getValue("engine", "maxSpotLights", &maxLights);
         shaderFile::addPreprocessorSymbol("MAX_SPOT_LIGHTS", std::to_string(maxLights));
     }
+
+    this->callRegisteredFunctions(&(this->initFunctions));
+
     for (const auto& [name, object] : engine::shaders) {
         object->compile();
     }
@@ -242,9 +245,6 @@ void engine::init() {
     for (const auto& [name, object] : engine::materials) {
         object->compile();
     }
-
-    this->callRegisteredFunctions(&(this->initFunctions));
-
     for (const auto& [name, scriptProvider] : this->scriptProviders) {
         scriptProvider->initProvider();
 

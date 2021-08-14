@@ -7,7 +7,7 @@ struct Material {
     float lambertFactor; // between 0 and 1
 };
 
-struct Light {
+struct PointLight {
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
@@ -19,7 +19,7 @@ in VS_OUT {
     vec3 Normal;
     vec2 TexCoord;
     vec3 WorldPosition;
-    Light lightOut;
+    PointLight lightOut;
 } i;
 
 out vec4 FragColor;

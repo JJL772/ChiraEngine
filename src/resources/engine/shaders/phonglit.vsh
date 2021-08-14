@@ -4,7 +4,7 @@ layout (location = 1) in vec3 iNormal;
 layout (location = 2) in vec3 iColor;
 layout (location = 3) in vec2 iTexCoord;
 
-struct Light {
+struct PointLight {
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
@@ -16,14 +16,14 @@ out VS_OUT {
     vec3 Normal;
     vec2 TexCoord;
     vec3 WorldPosition;
-    Light lightOut;
+    PointLight lightOut;
 } o;
 
 uniform mat4 m;
 uniform mat4 v;
 uniform mat4 p;
 
-uniform Light light;
+uniform PointLight light;
 
 
 void main() {
