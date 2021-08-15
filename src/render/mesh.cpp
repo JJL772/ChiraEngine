@@ -1,7 +1,7 @@
 #include "mesh.h"
 #include "../core/engine.h"
 
-mesh::mesh(abstractMeshLoader* loader, const std::string& filepath_, const std::string& material_, int depthFunc_, bool backfaceCulling_, int cullType_) : compilable(), model(1.0f), vertices(), indices() {
+mesh::mesh(abstractMeshLoader* loader, const std::string& filepath_, const std::string& material_, int depthFunc_, bool backfaceCulling_, int cullType_) : resource(), model(1.0f), vertices(), indices() {
     this->depthFunc = depthFunc_;
     this->backfaceCulling = backfaceCulling_;
     this->cullType = cullType_;

@@ -1,7 +1,7 @@
 #pragma once
 
-class compilable {
+class resource {
 public:
     virtual void compile() = 0;
-    virtual void discard() {}
+    virtual void discard() = 0;
 };

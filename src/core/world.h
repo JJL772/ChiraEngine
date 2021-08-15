@@ -8,7 +8,7 @@
 #include "../render/light.h"
 #include "../core/engine.h"
 
-class world : public compilable {
+class world : public resource {
 public:
     world(class engine* e, abstractCamera* camera);
     virtual ~world();

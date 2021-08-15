@@ -1,9 +1,10 @@
 #pragma once
 
-#include "compilable.h"
+#include "../core/resource.h"
 
-class handleObject : public compilable {
+class handleObject : public resource {
 public:
+    handleObject(): resource() {}
     [[nodiscard]] int getHandle() const {
         return this->handle;
     }

@@ -4,7 +4,7 @@
 #include "../loader/image.h"
 #include "../core/virtualFileSystem.h"
 
-texture::texture(const std::string& filepath) {
+texture::texture(const std::string& filepath): resource() {
     int w, h, bd;
     this->file = std::make_unique<image>(virtualFileSystem::getTexturePath(filepath), &w, &h, &bd, 0);
     this->width = w;
@@ -12,7 +12,7 @@ texture::texture(const std::string& filepath) {
     this->bitDepth = bd;
 }
 
-texture::texture(abstractImage* image, int w, int h, int bd) {
+texture::texture(abstractImage* image, int w, int h, int bd): resource() {
     this->file.reset(image);
     this->width = w;
     this->height = h;

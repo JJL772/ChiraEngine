@@ -21,6 +21,7 @@
 #include "../utility/logger.h"
 #include "world.h"
 #include "entity.h"
+#include "resource.h"
 #include "../render/abstractMaterial.h"
 
 class keybind;
@@ -51,6 +52,10 @@ public:
 
     static void setSettingsLoader(abstractSettingsLoader* settingsLoader);
     static abstractSettingsLoader* getSettingsLoader();
+
+    static void addResource(const std::string& name, resource* res) {
+
+    }
 
     static void addShader(const std::string& name, shader* s);
     static shader* getShader(const std::string& name);

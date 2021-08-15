@@ -3,9 +3,9 @@
 #include <memory>
 #include <string>
 #include "../loader/abstractImage.h"
-#include "../utility/compilable.h"
+#include "../core/resource.h"
 
-class texture : public compilable {
+class texture : public resource {
 public:
     explicit texture(const std::string& file);
     texture(abstractImage* image, int w, int h, int bd);
