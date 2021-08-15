@@ -4,8 +4,8 @@
 #include <string>
 #include <vector>
 #include <glm/vec3.hpp>
-#include "abstractCamera.h"
-#include "light.h"
+#include "../render/abstractCamera.h"
+#include "../render/light.h"
 #include "../core/engine.h"
 
 class world : public compilable {

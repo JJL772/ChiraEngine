@@ -1,12 +1,16 @@
 #include "../src/core/engine.h"
+/*
 #include "../src/render/texture2d.h"
 #include "../src/loader/objMeshLoader.h"
 #include "../src/render/freecam.h"
 #include "../src/sound/oggFileSound.h"
 #include "../src/render/phongMaterial.h"
 #include "../src/implementation/discordRichPresence.h"
+*/
 
 int main() {
+    chiraLogger::log(INFO, "Demo", "Builds");
+    /*
     engine engine;
     virtualFileSystem::addResourceDirectory("resources/demo/");
 
@@ -70,4 +74,5 @@ int main() {
 
     engine.init();
     engine.run();
+    */
 }
