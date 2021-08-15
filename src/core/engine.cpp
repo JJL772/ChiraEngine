@@ -383,6 +383,17 @@ abstractMaterial* engine::getMaterial(const std::string& name) {
     return engine::materials.at(name).get();
 }
 
+void engine::addGenericResource(const std::string& name, resource* r) {
+    engine::resources.insert(std::make_pair(name, r));
+}
+
+resource* engine::getGenericResource(const std::string& name) {
+    if (engine::resources.count(name) == 0) {
+        chiraLogger::log(ERR, "engine::getMaterial", "Material " + name + " is not recognized, check that you registered it properly");
+    }
+    return engine::resources.at(name).get();
+}
+
 world* engine::getWorld(const std::string& name) {
     // todo: get world
     return nullptr;

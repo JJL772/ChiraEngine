@@ -53,10 +53,6 @@ public:
     static void setSettingsLoader(abstractSettingsLoader* settingsLoader);
     static abstractSettingsLoader* getSettingsLoader();
 
-    static void addResource(const std::string& name, resource* res) {
-
-    }
-
     static void addShader(const std::string& name, shader* s);
     static shader* getShader(const std::string& name);
     static void addTexture(const std::string& name, texture* t);
@@ -65,6 +61,8 @@ public:
     static mesh* getMesh(const std::string& name);
     static void addMaterial(const std::string& name, abstractMaterial* t);
     static abstractMaterial* getMaterial(const std::string& name);
+    static void addGenericResource(const std::string& name, resource* r);
+    static resource* getGenericResource(const std::string& name);
 
     world* getWorld(const std::string& name);
     void addWorld(const std::string& name, world* newWorld);
@@ -101,6 +99,7 @@ private:
     static inline std::unordered_map<std::string, std::unique_ptr<texture>> textures{};
     static inline std::unordered_map<std::string, std::unique_ptr<mesh>> meshes{};
     static inline std::unordered_map<std::string, std::unique_ptr<abstractMaterial>> materials{};
+    static inline std::unordered_map<std::string, std::unique_ptr<resource>> resources{};
 
     bool started = false;
     bool mouseCaptured = false;
