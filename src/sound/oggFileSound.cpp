@@ -1,7 +1,3 @@
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunknown-pragmas"
-#pragma ide diagnostic ignored "cppcoreguidelines-narrowing-conversions"
-
 #include "oggFileSound.h"
 
 #include <cstring>
@@ -27,7 +23,7 @@ bool oggFileSound::init(const std::string& filename, float pitch_, float gain_, 
     }
     this->audioData.file.seekg(0, std::ios_base::beg);
     this->audioData.file.ignore(std::numeric_limits<std::streamsize>::max());
-    this->audioData.size = this->audioData.file.gcount();
+    this->audioData.size = (ALsizei) this->audioData.file.gcount();
     this->audioData.file.clear();
     this->audioData.file.seekg(0, std::ios_base::beg);
     this->audioData.sizeConsumed = 0;
@@ -48,7 +44,7 @@ bool oggFileSound::init(const std::string& filename, float pitch_, float gain_, 
     this->audioData.channels = vorbisInfo->channels;
     this->audioData.bitsPerSample = 16;
     this->audioData.sampleRate = vorbisInfo->rate;
-    this->audioData.duration = ov_time_total(&this->audioData.oggVorbisFile, -1);
+    this->audioData.duration = (std::size_t) ov_time_total(&this->audioData.oggVorbisFile, -1);
 
     alCall(alGenSources, 1, &this->audioData.source);
     alCall(alSourcef, this->audioData.source, AL_PITCH, this->pitch);
@@ -240,7 +236,7 @@ void oggFileSound::discard() {
 
 std::size_t oggFileSound::readOggVorbisCallback(void* destination, std::size_t size1, std::size_t size2, void* fileHandle) {
     auto* audioData = reinterpret_cast<oggStreamData*>(fileHandle);
-    ALsizei length = size1 * size2;
+    auto length = (ALsizei) (size1 * size2);
     if (audioData->sizeConsumed + length > audioData->size) {
         length = audioData->size - audioData->sizeConsumed;
     }
@@ -278,13 +274,13 @@ std::int32_t oggFileSound::seekOggVorbisCallback(void* fileHandle, ogg_int64_t t
     auto* audioData = reinterpret_cast<oggStreamData*>(fileHandle);
     switch (type) {
         case SEEK_CUR:
-            audioData->sizeConsumed += to;
+            audioData->sizeConsumed += (ALsizei) to;
             break;
         case SEEK_END:
-            audioData->sizeConsumed = audioData->size - to;
+            audioData->sizeConsumed = (ALsizei) (audioData->size - to);
             break;
         case SEEK_SET:
-            audioData->sizeConsumed = to;
+            audioData->sizeConsumed = (ALsizei) to;
             break;
         default:
             return -1;
@@ -303,5 +299,3 @@ std::int32_t oggFileSound::seekOggVorbisCallback(void* fileHandle, ogg_int64_t t
 long int oggFileSound::tellOggVorbisCallback(void* fileHandle) {
     return reinterpret_cast<oggStreamData*>(fileHandle)->sizeConsumed;
 }
-
-#pragma clang diagnostic pop
