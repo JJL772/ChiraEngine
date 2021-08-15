@@ -19,10 +19,11 @@
 #include "../sound/abstractSoundManager.h"
 #include "../ui/console.h"
 #include "../utility/logger.h"
-#include "world.h"
-#include "entity.h"
+#include "../world/world.h"
+#include "../entity/entity.h"
 #include "resource.h"
 #include "../render/abstractMaterial.h"
+#include "../component/abstractComponent.h"
 
 class keybind;
 class mousebind;
@@ -64,10 +65,11 @@ public:
     static void addGenericResource(const std::string& name, resource* r);
     static resource* getGenericResource(const std::string& name);
 
-    world* getWorld(const std::string& name);
     void addWorld(const std::string& name, world* newWorld);
-    entity* getEntity(const std::string& entity);
+    world* getWorld(const std::string& name);
+    void addEntity(const std::string& world, const std::string& name, entity* newEntity);
     void addEntity(const std::string& name, entity* newEntity);
+    entity* getEntity(const std::string& entity);
 
     static void setBackgroundColor(float r, float g, float b, float a);
 

@@ -108,7 +108,7 @@ int vertexAttributes, textureUnits;
     int width, height;
     glfwGetFramebufferSize(this->window, &width, &height);
     glViewport(0, 0, width, height);
-    glfwSetFramebufferSizeCallback(this->window, this->framebufferSizeCallback);
+    glfwSetFramebufferSizeCallback(this->window, engine::framebufferSizeCallback);
     engine::setBackgroundColor(0.0f, 0.0f, 0.0f, 1.0f);
     glEnable(GL_DEPTH_TEST);
     glfwSwapInterval(1);
@@ -160,15 +160,14 @@ int vertexAttributes, textureUnits;
 
     this->callRegisteredFunctions(&(this->initFunctions));
 
-    for (const auto& [name, object] : engine::shaders) {
-        object->compile();
+    for (const auto& shaderPair : engine::shaders) {
+        shaderPair.second->compile();
     }
-
-    for (const auto& [name, object] : engine::textures) {
-        object->compile();
+    for (const auto& texturePair : engine::textures) {
+        texturePair.second->compile();
     }
-    for (const auto& [name, object] : engine::materials) {
-        object->compile();
+    for (const auto& materialPair : engine::materials) {
+        materialPair.second->compile();
     }
     for (const auto& [name, scriptProvider] : this->scriptProviders) {
         scriptProvider->initProvider();
@@ -213,10 +212,10 @@ void engine::run() {
 void engine::render() {
     this->lastTime = this->currentTime;
     this->currentTime = glfwGetTime();
-    for (const auto& [name, shader] : engine::shaders) {
+    for (const auto& shaderPair : engine::shaders) {
         // todo: get primary camera
-        shader->setUniform("p", this->getWorld("")->getCamera()->getProjectionMatrix());
-        shader->setUniform("v", this->getWorld("")->getCamera()->getViewMatrix());
+        shaderPair.second->setUniform("p", this->getWorld("")->getCamera()->getProjectionMatrix());
+        shaderPair.second->setUniform("v", this->getWorld("")->getCamera()->getViewMatrix());
     }
 
     ImGui_ImplOpenGL3_NewFrame();
@@ -231,8 +230,8 @@ void engine::render() {
     }
 #endif
 
-for (const auto& [name, scriptProvider] : this->scriptProviders) {
-        scriptProvider->render(this->getDeltaTime());
+    for (const auto& scriptProviderPair : this->scriptProviders) {
+        scriptProviderPair.second->render(this->getDeltaTime());
     }
 
     // todo: this
@@ -245,19 +244,19 @@ for (const auto& [name, scriptProvider] : this->scriptProviders) {
 void engine::stop() {
     chiraLogger::log(INFO_IMPORTANT, "ChiraEngine", "Gracefully exiting...");
 
-    for (const auto& [name, scriptProvider] : this->scriptProviders) {
-        scriptProvider->stop();
+    for (const auto& scriptProviderPair : this->scriptProviders) {
+        scriptProviderPair.second->stop();
     }
 
     if (discordRichPresence::initialized()) {
         discordRichPresence::shutdown();
     }
 
-    for (const auto& [name, object] : engine::textures) {
-        object->discard();
+    for (const auto& texturePair : engine::textures) {
+        texturePair.second->discard();
     }
-    for (const auto& [name, object] : engine::shaders) {
-        object->discard();
+    for (const auto& shaderPair : engine::shaders) {
+        shaderPair.second->discard();
     }
 
     callRegisteredFunctions(&(this->stopFunctions));
@@ -310,6 +309,7 @@ void engine::addScriptProvider(const std::string& name, abstractScriptProvider* 
 abstractScriptProvider* engine::getScriptProvider(const std::string& name) {
     if (this->scriptProviders.count(name) == 0) {
         chiraLogger::log(ERR, "engine::getScriptProvider", "Script provider " + name + " is not recognized, check that you registered it properly");
+        return nullptr;
     }
     return this->scriptProviders.at(name).get();
 }
@@ -346,6 +346,7 @@ void engine::addShader(const std::string& name, shader* s) {
 shader* engine::getShader(const std::string& name) {
     if (engine::shaders.count(name) == 0) {
         chiraLogger::log(ERR, "engine::getShader", "Shader " + name + " is not recognized, check that you registered it properly");
+        return nullptr;
     }
     return engine::shaders.at(name).get();
 }
@@ -357,6 +358,7 @@ void engine::addTexture(const std::string& name, texture* t) {
 texture* engine::getTexture(const std::string& name) {
     if (engine::textures.count(name) == 0) {
         chiraLogger::log(ERR, "engine::getTexture", "Texture " + name + " is not recognized, check that you registered it properly");
+        return nullptr;
     }
     return engine::textures.at(name).get();
 }
@@ -368,6 +370,7 @@ void engine::addMesh(const std::string& name, mesh* m) {
 mesh* engine::getMesh(const std::string& name) {
     if (engine::meshes.count(name) == 0) {
         chiraLogger::log(ERR, "engine::getMesh", "Mesh " + name + " is not recognized, check that you registered it properly");
+        return nullptr;
     }
     return engine::meshes.at(name).get();
 }
@@ -379,6 +382,7 @@ void engine::addMaterial(const std::string& name, abstractMaterial* m) {
 abstractMaterial* engine::getMaterial(const std::string& name) {
     if (engine::materials.count(name) == 0) {
         chiraLogger::log(ERR, "engine::getMaterial", "Material " + name + " is not recognized, check that you registered it properly");
+        return nullptr;
     }
     return engine::materials.at(name).get();
 }
@@ -394,22 +398,22 @@ resource* engine::getGenericResource(const std::string& name) {
     return engine::resources.at(name).get();
 }
 
+void engine::addWorld(const std::string& name, world* newWorld) {
+    // todo: add world
+}
+
 world* engine::getWorld(const std::string& name) {
     // todo: get world
     return nullptr;
 }
 
-void engine::addWorld(const std::string& name, world* newWorld) {
-    // todo: add world
+void engine::addEntity(const std::string& name, entity* newEntity) {
+    // todo: add entity
 }
 
 entity* engine::getEntity(const std::string& name) {
     // todo: get entity
     return nullptr;
-}
-
-void engine::addEntity(const std::string& name, entity* newEntity) {
-    // todo: add entity
 }
 
 void engine::setBackgroundColor(float r, float g, float b, float a) {

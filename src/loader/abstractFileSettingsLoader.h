@@ -2,7 +2,7 @@
 
 #include <string>
 #include "abstractSettingsLoader.h"
-#include "../core/virtualFileSystem.h"
+#include "../utility/virtualFileSystem.h"
 
 class abstractFileSettingsLoader : public abstractSettingsLoader {
 public:
