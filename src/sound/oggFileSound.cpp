@@ -3,6 +3,8 @@
 #pragma ide diagnostic ignored "cppcoreguidelines-narrowing-conversions"
 
 #include "oggFileSound.h"
+
+#include <cstring>
 #include "../core/virtualFileSystem.h"
 
 bool oggFileSound::init(const std::string& filename) {

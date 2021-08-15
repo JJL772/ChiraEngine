@@ -1,6 +1,7 @@
 #include "angelscriptHolder.h"
 #include <angelscript.h>
 #include <scriptbuilder/scriptbuilder.h>
+#include "../utility/logger.h"
 
 angelscriptHolder::angelscriptHolder(const std::string& path) {
     this->filepath = virtualFileSystem::getScriptPath(path);
