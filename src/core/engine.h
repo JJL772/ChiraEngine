@@ -3,7 +3,7 @@
 #include "glad/gl.h"
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
-#include <map>
+#include <unordered_map>
 #include <functional>
 #include <vector>
 #include <memory>
@@ -87,15 +87,15 @@ private:
 
     std::vector<keybind> keybinds{};
     std::vector<mousebind> mousebinds{};
-    std::map<std::string, std::unique_ptr<abstractScriptProvider>> scriptProviders{};
+    std::unordered_map<std::string, std::unique_ptr<abstractScriptProvider>> scriptProviders{};
     std::unique_ptr<abstractSoundManager> soundManager = nullptr;
 
     static inline std::unique_ptr<abstractSettingsLoader> settingsLoader = nullptr;
 
-    static inline std::map<const std::string, std::unique_ptr<shader>> shaders{};
-    static inline std::map<const std::string, std::unique_ptr<texture>> textures{};
-    static inline std::map<const std::string, std::unique_ptr<mesh>> meshes{};
-    static inline std::map<const std::string, std::unique_ptr<abstractMaterial>> materials{};
+    static inline std::unordered_map<std::string, std::unique_ptr<shader>> shaders{};
+    static inline std::unordered_map<std::string, std::unique_ptr<texture>> textures{};
+    static inline std::unordered_map<std::string, std::unique_ptr<mesh>> meshes{};
+    static inline std::unordered_map<std::string, std::unique_ptr<abstractMaterial>> materials{};
 
     bool started = false;
     bool mouseCaptured = false;
