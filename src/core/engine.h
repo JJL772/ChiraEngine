@@ -60,7 +60,6 @@ public:
     void addWorld(const std::string& name, world* newWorld);
     entity* getEntity(const std::string& entity);
     void addEntity(const std::string& name, entity* newEntity);
-    void callRegisteredFunctions(const std::vector<std::function<void(engine*)>>* list);
     [[nodiscard]] const GLFWwindow* getWindow() const;
     [[nodiscard]] bool isStarted() const;
     // NOTE: only guaranteed to work after run() in a render method
@@ -87,6 +86,7 @@ private:
     console consoleUI{};
     bool started = false;
     double lastTime, currentTime, lastMouseX, lastMouseY;
+    void callRegisteredFunctions(const std::vector<std::function<void(engine*)>>* list);
     static void setSettingsLoaderDefaults();
     // NOTE: PNGs must have a bit depth of 8 or less* (less not tested)
     void setIcon(const std::string& iconPath);
