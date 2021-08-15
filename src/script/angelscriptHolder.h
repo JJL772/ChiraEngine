@@ -1,7 +1,7 @@
 #pragma once
 
 #include "angelscriptProvider.h"
-#include "../core/virtualFileSystem.h"
+#include "../utility/virtualFileSystem.h"
 
 class angelscriptProvider;
 

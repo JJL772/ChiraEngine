@@ -2,7 +2,7 @@
 
 #include "glad/gl.h"
 #include "../loader/image.h"
-#include "../core/virtualFileSystem.h"
+#include "../utility/virtualFileSystem.h"
 
 texture::texture(const std::string& filepath): resource() {
     int w, h, bd;

@@ -3,7 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include <algorithm>
-#include "../core/virtualFileSystem.h"
+#include "../utility/virtualFileSystem.h"
 #include "../utility/logger.h"
 
 void objMeshLoader::loadMesh(const std::string& filepath, std::vector<vertex>* vertices, std::vector<unsigned int>* indices) {

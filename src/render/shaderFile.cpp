@@ -3,7 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <regex>
-#include "../core/virtualFileSystem.h"
+#include "../utility/virtualFileSystem.h"
 
 // todo: add #include preprocessing
 shaderFile::shaderFile(unsigned int type, const std::string& source, bool isFilePath) : handleObject() {

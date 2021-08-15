@@ -71,8 +71,10 @@ list(APPEND ENGINE_SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/third_party/imgui/backends/imgui_impl_opengl3.h)
 
 # CHIRAENGINE
+include(${CMAKE_CURRENT_SOURCE_DIR}/component/CMakeLists.txt)
 include(${CMAKE_CURRENT_SOURCE_DIR}/config/CMakeLists.txt)
 include(${CMAKE_CURRENT_SOURCE_DIR}/core/CMakeLists.txt)
+include(${CMAKE_CURRENT_SOURCE_DIR}/entity/CMakeLists.txt)
 include(${CMAKE_CURRENT_SOURCE_DIR}/implementation/CMakeLists.txt)
 include(${CMAKE_CURRENT_SOURCE_DIR}/input/CMakeLists.txt)
 include(${CMAKE_CURRENT_SOURCE_DIR}/loader/CMakeLists.txt)
@@ -81,6 +83,7 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/script/CMakeLists.txt)
 include(${CMAKE_CURRENT_SOURCE_DIR}/sound/CMakeLists.txt)
 include(${CMAKE_CURRENT_SOURCE_DIR}/ui/CMakeLists.txt)
 include(${CMAKE_CURRENT_SOURCE_DIR}/utility/CMakeLists.txt)
+include(${CMAKE_CURRENT_SOURCE_DIR}/world/CMakeLists.txt)
 add_library(ChiraEngine ${ENGINE_SOURCES})
 
 target_include_directories(ChiraEngine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/third_party/angelscript/include)
