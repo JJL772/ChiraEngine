@@ -31,81 +31,6 @@ engine::engine(const std::string& configPath) {
     this->lastMouseY = -1;
 }
 
-void engine::errorCallback(int error, const char* description) {
-#if DEBUG
-    std::fprintf(stderr, "GLFW error %d: %s\n", error, description);
-#endif
-}
-
-void engine::framebufferSizeCallback(GLFWwindow* window, int width, int height) {
-    glViewport(0, 0, width, height);
-}
-
-void engine::keyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-    auto* e = static_cast<engine*>(glfwGetWindowUserPointer(window));
-    if (action == GLFW_REPEAT) return;
-    for (keybind& k : *e->getKeybinds()) {
-        if (k.getButton() == key && k.getAction() == action) {
-            k.run(e);
-        }
-    }
-}
-
-void engine::keyboardRepeatingCallback() {
-    for (keybind& k : this->keybinds) {
-        if (glfwGetKey(this->window, k.getButton()) && k.getAction() == GLFW_REPEAT) {
-            k.run(this);
-        }
-    }
-}
-
-void engine::mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
-    auto* e = static_cast<engine*>(glfwGetWindowUserPointer(window));
-    for (keybind& k : *e->getKeybinds()) {
-        if (k.getButton() == button && k.getAction() == action) {
-            k.run(e);
-        }
-    }
-}
-
-void engine::mouseButtonRepeatingCallback() {
-    for (keybind& k : this->keybinds) {
-        if (k.isMouse() && (glfwGetMouseButton(this->window, k.getButton()) && k.getAction() == GLFW_REPEAT)) {
-            k.run(this);
-        }
-    }
-}
-
-void engine::mouseMovementCallback(GLFWwindow* window, double xPos, double yPos) {
-    auto* e = static_cast<engine*>(glfwGetWindowUserPointer(window));
-
-    if (e->lastMouseX == -1) e->lastMouseX = xPos;
-    if (e->lastMouseY == -1) e->lastMouseY = yPos;
-
-    int width, height;
-    glfwGetWindowSize(e->window, &width, &height);
-    double xOffset = xPos - e->lastMouseX;
-    double yOffset = yPos - e->lastMouseY;
-
-    for (mousebind& bind : *e->getMousebinds()) {
-        if (bind.getType() == MOVE) {
-            bind.run(e, xOffset, yOffset);
-        }
-    }
-
-    e->lastMouseX = xPos;
-    e->lastMouseY = yPos;
-}
-
-void engine::mouseScrollCallback(GLFWwindow* window, double xPos, double yPos) {
-    auto* e = static_cast<engine*>(glfwGetWindowUserPointer(window));
-    for (mousebind& bind : *e->getMousebinds()) {
-        if (bind.getType() == SCROLL) {
-            bind.run(e, xPos, yPos);
-        }
-    }
-}
-
 void engine::init() {
     this->started = true;
 
@@ -123,7 +48,7 @@ void engine::init() {
         chiraLogger::log(ERR, "GLFW", "GLFW not defined");
         exit(EXIT_FAILURE);
     }
-    glfwSetErrorCallback(this->errorCallback);
+    glfwSetErrorCallback(engine::errorCallback);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -173,7 +98,7 @@ void engine::init() {
     }
 
 #if DEBUG
-    int vertexAttributes, textureUnits;
+int vertexAttributes, textureUnits;
     glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &vertexAttributes);
     glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &textureUnits);
     chiraLogger::log(INFO, "OpenGL", "Maximum number of vertex attributes is " + std::to_string(vertexAttributes));
@@ -306,7 +231,7 @@ void engine::render() {
     }
 #endif
 
-    for (const auto& [name, scriptProvider] : this->scriptProviders) {
+for (const auto& [name, scriptProvider] : this->scriptProviders) {
         scriptProvider->render(this->getDeltaTime());
     }
 
@@ -350,8 +275,16 @@ void engine::stop() {
     exit(EXIT_SUCCESS);
 }
 
-void engine::setBackgroundColor(float r, float g, float b, float a) {
-    glClearColor(r, g, b, a);
+void engine::addInitFunction(const std::function<void(engine*)>& init) {
+    this->initFunctions.push_back(init);
+}
+
+void engine::addRenderFunction(const std::function<void(engine*)>& render) {
+    this->renderFunctions.push_back(render);
+}
+
+void engine::addStopFunction(const std::function<void(engine*)>& stop) {
+    this->stopFunctions.push_back(stop);
 }
 
 void engine::addKeybind(const keybind& keybind) {
@@ -368,6 +301,42 @@ void engine::addMousebind(const mousebind& mousebind) {
 
 std::vector<mousebind>* engine::getMousebinds() {
     return &(this->mousebinds);
+}
+
+void engine::addScriptProvider(const std::string& name, abstractScriptProvider* scriptProvider) {
+    this->scriptProviders.insert(std::make_pair(name, scriptProvider));
+}
+
+abstractScriptProvider* engine::getScriptProvider(const std::string& name) {
+    if (this->scriptProviders.count(name) == 0) {
+        chiraLogger::log(ERR, "engine::getScriptProvider", "Script provider " + name + " is not recognized, check that you registered it properly");
+    }
+    return this->scriptProviders.at(name).get();
+}
+
+void engine::setSoundManager(abstractSoundManager* newSoundManager) {
+    this->soundManager.reset(newSoundManager);
+}
+
+abstractSoundManager* engine::getSoundManager() {
+    if (!this->soundManager) {
+        chiraLogger::log(WARN, "engine::getSoundManager", "Must set sound manager in engine::setSoundManager for this call to function");
+        return nullptr;
+    }
+    return this->soundManager.get();
+}
+
+void engine::setSettingsLoader(abstractSettingsLoader* newSettingsLoader) {
+    engine::settingsLoader.reset(newSettingsLoader);
+    engine::setSettingsLoaderDefaults();
+}
+
+abstractSettingsLoader* engine::getSettingsLoader() {
+    if (!engine::settingsLoader) {
+        chiraLogger::log(WARN, "engine::getSettingsLoader", "Must set settings loader in engine::setSettingsLoader for this call to function");
+        return nullptr;
+    }
+    return engine::settingsLoader.get();
 }
 
 void engine::addShader(const std::string& name, shader* s) {
@@ -414,54 +383,6 @@ abstractMaterial* engine::getMaterial(const std::string& name) {
     return engine::materials.at(name).get();
 }
 
-void engine::addScriptProvider(const std::string& name, abstractScriptProvider* scriptProvider) {
-    this->scriptProviders.insert(std::make_pair(name, scriptProvider));
-}
-
-abstractScriptProvider* engine::getScriptProvider(const std::string& name) {
-    if (this->scriptProviders.count(name) == 0) {
-        chiraLogger::log(ERR, "engine::getScriptProvider", "Script provider " + name + " is not recognized, check that you registered it properly");
-    }
-    return this->scriptProviders.at(name).get();
-}
-
-void engine::setSoundManager(abstractSoundManager* newSoundManager) {
-    this->soundManager.reset(newSoundManager);
-}
-
-abstractSoundManager* engine::getSoundManager() {
-    if (!this->soundManager) {
-        chiraLogger::log(WARN, "engine::getSoundManager", "Must set sound manager in engine::setSoundManager for this call to function");
-        return nullptr;
-    }
-    return this->soundManager.get();
-}
-
-void engine::addInitFunction(const std::function<void(engine*)>& init) {
-    this->initFunctions.push_back(init);
-}
-
-void engine::addRenderFunction(const std::function<void(engine*)>& render) {
-    this->renderFunctions.push_back(render);
-}
-
-void engine::addStopFunction(const std::function<void(engine*)>& stop) {
-    this->stopFunctions.push_back(stop);
-}
-
-abstractSettingsLoader* engine::getSettingsLoader() {
-    if (!engine::settingsLoader) {
-        chiraLogger::log(WARN, "engine::getSettingsLoader", "Must set settings loader in engine::setSettingsLoader for this call to function");
-        return nullptr;
-    }
-    return engine::settingsLoader.get();
-}
-
-void engine::setSettingsLoader(abstractSettingsLoader* newSettingsLoader) {
-    engine::settingsLoader.reset(newSettingsLoader);
-    engine::setSettingsLoaderDefaults();
-}
-
 world* engine::getWorld(const std::string& name) {
     // todo: get world
     return nullptr;
@@ -478,6 +399,47 @@ entity* engine::getEntity(const std::string& name) {
 
 void engine::addEntity(const std::string& name, entity* newEntity) {
     // todo: add entity
+}
+
+void engine::setBackgroundColor(float r, float g, float b, float a) {
+    glClearColor(r, g, b, a);
+}
+
+bool engine::isStarted() const {
+    return this->started;
+}
+
+double engine::getDeltaTime() const {
+    return this->currentTime - this->lastTime;
+}
+
+void engine::captureMouse(bool capture) {
+    this->mouseCaptured = capture;
+    if (capture) {
+        glfwSetInputMode(this->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NoMouse;
+    } else {
+        glfwSetInputMode(this->window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        ImGui::GetIO().ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
+    }
+}
+
+bool engine::isMouseCaptured() const {
+    return this->mouseCaptured;
+}
+
+void engine::showConsole(bool shouldShow) {
+    this->getConsole()->setEnabled(shouldShow);
+}
+
+console* engine::getConsole() {
+    return &(this->consoleUI);
+}
+
+void engine::callRegisteredFunctions(const std::vector<std::function<void(engine*)>>* list) {
+    for (const std::function<void(engine*)>& func : *list) {
+        func(this);
+    }
 }
 
 void engine::setSettingsLoaderDefaults() {
@@ -503,24 +465,6 @@ void engine::setSettingsLoaderDefaults() {
     engine::settingsLoader->save();
 }
 
-void engine::callRegisteredFunctions(const std::vector<std::function<void(engine*)>>* list) {
-    for (const std::function<void(engine*)>& func : *list) {
-        func(this);
-    }
-}
-
-const GLFWwindow* engine::getWindow() const {
-    return this->window;
-}
-
-bool engine::isStarted() const {
-    return this->started;
-}
-
-double engine::getDeltaTime() const {
-    return this->currentTime - this->lastTime;
-}
-
 void engine::setIcon(const std::string& iconPath) {
 #if DEBUG
     assert(this->started);
@@ -537,25 +481,77 @@ void engine::setIcon(const std::string& iconPath) {
     glfwSetWindowIcon(this->window, 1, images);
 }
 
-void engine::captureMouse(bool capture) {
-    this->mouseCaptured = capture;
-    if (capture) {
-        glfwSetInputMode(this->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-        ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NoMouse;
-    } else {
-        glfwSetInputMode(this->window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-        ImGui::GetIO().ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
+void engine::errorCallback(int error, const char* description) {
+#if DEBUG
+    std::fprintf(stderr, "GLFW error %d: %s\n", error, description);
+#endif
+}
+
+void engine::framebufferSizeCallback(GLFWwindow* window, int width, int height) {
+    glViewport(0, 0, width, height);
+}
+
+void engine::keyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+    auto* e = static_cast<engine*>(glfwGetWindowUserPointer(window));
+    if (action == GLFW_REPEAT) return;
+    for (keybind& k : *e->getKeybinds()) {
+        if (k.getButton() == key && k.getAction() == action) {
+            k.run(e);
+        }
     }
 }
 
-bool engine::isMouseCaptured() const {
-    return this->mouseCaptured;
+void engine::keyboardRepeatingCallback() {
+    for (keybind& k : this->keybinds) {
+        if (glfwGetKey(this->window, k.getButton()) && k.getAction() == GLFW_REPEAT) {
+            k.run(this);
+        }
+    }
 }
 
-void engine::showConsole(bool shouldShow) {
-    this->getConsole()->setEnabled(shouldShow);
+void engine::mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
+    auto* e = static_cast<engine*>(glfwGetWindowUserPointer(window));
+    for (keybind& k : *e->getKeybinds()) {
+        if (k.getButton() == button && k.getAction() == action) {
+            k.run(e);
+        }
+    }
 }
 
-console* engine::getConsole() {
-    return &(this->consoleUI);
+void engine::mouseButtonRepeatingCallback() {
+    for (keybind& k : this->keybinds) {
+        if (k.isMouse() && (glfwGetMouseButton(this->window, k.getButton()) && k.getAction() == GLFW_REPEAT)) {
+            k.run(this);
+        }
+    }
+}
+
+void engine::mouseMovementCallback(GLFWwindow* window, double xPos, double yPos) {
+    auto* e = static_cast<engine*>(glfwGetWindowUserPointer(window));
+
+    if (e->lastMouseX == -1) e->lastMouseX = xPos;
+    if (e->lastMouseY == -1) e->lastMouseY = yPos;
+
+    int width, height;
+    glfwGetWindowSize(e->window, &width, &height);
+    double xOffset = xPos - e->lastMouseX;
+    double yOffset = yPos - e->lastMouseY;
+
+    for (mousebind& bind : *e->getMousebinds()) {
+        if (bind.getType() == MOVE) {
+            bind.run(e, xOffset, yOffset);
+        }
+    }
+
+    e->lastMouseX = xPos;
+    e->lastMouseY = yPos;
+}
+
+void engine::mouseScrollCallback(GLFWwindow* window, double xPos, double yPos) {
+    auto* e = static_cast<engine*>(glfwGetWindowUserPointer(window));
+    for (mousebind& bind : *e->getMousebinds()) {
+        if (bind.getType() == SCROLL) {
+            bind.run(e, xPos, yPos);
+        }
+    }
 }
