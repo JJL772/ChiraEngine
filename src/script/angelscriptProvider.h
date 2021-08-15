@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 #include <functional>
-#include "../../core/engine.h"
+#include <memory>
 #include "abstractScriptProvider.h"
 #include "angelscriptHolder.h"
 #include "angelscriptHelpers.h"

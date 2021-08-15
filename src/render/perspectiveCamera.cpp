@@ -7,9 +7,9 @@ perspectiveCamera::perspectiveCamera(engine* engine, float newYaw, float newPitc
 
 void perspectiveCamera::init(engine* engine) {
     int windowWidth = 1600;
-    engine->getSettingsLoader()->getValue("graphics", "windowWidth", &windowWidth);
+    engine::getSettingsLoader()->getValue("graphics", "windowWidth", &windowWidth);
     int windowHeight = 900;
-    engine->getSettingsLoader()->getValue("graphics", "windowHeight", &windowHeight);
+    engine::getSettingsLoader()->getValue("graphics", "windowHeight", &windowHeight);
     this->projection = glm::perspective(glm::radians(this->zoom), (float) windowWidth / (float) windowHeight, 0.1f, 1024.0f);
     this->updateCameraVectors();
 }

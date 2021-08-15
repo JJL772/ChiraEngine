@@ -1,7 +1,10 @@
-#include <fstream>
-#include <algorithm>
 #include "objMeshLoader.h"
-#include "../core/engine.h"
+
+#include <fstream>
+#include <sstream>
+#include <algorithm>
+#include "../core/virtualFileSystem.h"
+#include "../utility/logger.h"
 
 void objMeshLoader::loadMesh(const std::string& filepath, std::vector<vertex>* vertices, std::vector<unsigned int>* indices) {
     std::vector<position> vertexBuffer;

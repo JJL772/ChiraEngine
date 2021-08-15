@@ -1,6 +1,7 @@
 #include "discordRichPresence.h"
 
-#include "../core/engine.h"
+#include <cstring>
+#include "../utility/logger.h"
 
 void discordRichPresence::init(const std::string& appId) {
     if (discordRichPresence::isInitialized) return;

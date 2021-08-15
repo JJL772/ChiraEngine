@@ -2,8 +2,7 @@
 
 #include <glm/glm.hpp>
 #include "../utility/axis.h"
-
-class engine;
+#include "../core/engine.h"
 
 class abstractCamera {
 public:

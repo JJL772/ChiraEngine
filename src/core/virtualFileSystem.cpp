@@ -1,5 +1,6 @@
 #include "virtualFileSystem.h"
 #include <fstream>
+#include "../utility/logger.h"
 
 std::vector<std::string>* virtualFileSystem::getResourceDirectories() {
     return &(virtualFileSystem::resourcePaths);

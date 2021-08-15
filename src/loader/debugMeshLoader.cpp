@@ -1,8 +1,6 @@
 #include "debugMeshLoader.h"
 
-#if DEBUG
-#include <stdexcept>
-#endif
+#include "../utility/logger.h"
 
 void debugMeshLoader::loadMesh(const std::string& filepath, std::vector<vertex>* vertices, std::vector<unsigned int>* indices) {
     if (filepath == "plane") {
@@ -60,8 +58,6 @@ void debugMeshLoader::loadMesh(const std::string& filepath, std::vector<vertex>*
             22, 23, 20
         });
     } else {
-#if DEBUG
-        throw std::runtime_error("File path for the debug mesh loader must be a valid name (example: \"cube\")");
-#endif
+        chiraLogger::log(ERR, "debugMeshLoader", "File path for the debug mesh loader must be a valid name (example: \"cube\")");
     }
 }

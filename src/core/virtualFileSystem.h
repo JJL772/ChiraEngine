@@ -2,7 +2,6 @@
 
 #include <vector>
 #include <string>
-#include "engine.h"
 
 const std::string ENGINE_FILESYSTEM_PREFIX = "resources/engine/";
 

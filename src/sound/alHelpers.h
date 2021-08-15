@@ -2,7 +2,7 @@
 
 #include <AL/al.h>
 #include <AL/alc.h>
-#include "../core/engine.h"
+#include "../utility/logger.h"
 
 /*
  * This code is largely copied verbatim from:

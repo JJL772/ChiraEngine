@@ -1,4 +1,5 @@
 #include "jsonSettingsLoader.h"
+
 #include <iomanip>
 
 jsonSettingsLoader::jsonSettingsLoader(const std::string& path) : abstractFileSettingsLoader(path), settings() {}
