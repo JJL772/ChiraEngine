@@ -22,7 +22,7 @@
 #include "../world/world.h"
 #include "../entity/entity.h"
 #include "../resource/abstractResource.h"
-#include "../resource/abstractMaterial.h"
+#include "../resource/material.h"
 #include "../component/abstractComponent.h"
 #include "../resource/mesh.h"
 

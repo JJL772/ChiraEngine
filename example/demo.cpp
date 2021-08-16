@@ -9,8 +9,6 @@
 
 int main() {
     engine engine;
-
-    /*
     virtualFileSystem::addResourceDirectory("resources/demo/");
 
     objMeshLoader objMeshLoader;
@@ -33,11 +31,11 @@ int main() {
     }));
 
     engine.addInitFunction([&objMeshLoader](class engine* e) {
-        engine::addTexture("container_diffuse", new texture2d("container_diffuse.png", GL_RGBA));
-        engine::addTexture("container_specular", new texture2d("container_specular.png", GL_RGBA));
-        engine::addShader("phonglit", new shader("phonglit.vsh", "phonglit.fsh"));
-        engine::addMaterial("phonglit", new phongMaterial{"phonglit", "container_diffuse", "container_specular"});
-        engine::addMesh("cube", new mesh(&objMeshLoader, "teapot.obj", "phonglit"));
+        unsigned int cube_diffuse = resourceManager::addTexture(new texture2d("container_diffuse.png", GL_RGBA));
+        unsigned int cube_specular = resourceManager::addTexture(new texture2d("container_specular.png", GL_RGBA));
+        unsigned int phonglit_shader = resourceManager::addShader(new shader("phonglit.vsh", "phonglit.fsh"));
+        unsigned int phong_material = resourceManager::addMaterial(new phongMaterial{phonglit_shader, cube_diffuse, cube_specular});
+        resourceManager::addMesh(new mesh(&objMeshLoader, "teapot.obj", phong_material));
 
         discordRichPresence::init("875778280899358720");
         discordRichPresence::setLargeImage("main_logo");
@@ -45,10 +43,8 @@ int main() {
         discordRichPresence::setState("https://discord.gg/ASgHFkX");
 
         e->captureMouse(true);
-        e->addEntity("cube", new entity{});
-        e->getEntity("cube")->addComponent(e, "mesh", new meshComponent{});
-        e->addWorld("", new world{});
-        e->getWorld("")->addEntity("cube");
+        e->getEntity(e->addEntity(new entity{}))->addComponent(e, new meshComponent{});
+        e->getWorld(e->addWorld(new world{}))->addEntity(0);
 
         bool angelscriptEnabled = true;
         engine::getSettingsLoader()->getValue("scripting", "angelscript", &angelscriptEnabled);
@@ -75,5 +71,4 @@ int main() {
 
     engine.init();
     engine.run();
-    */
 }

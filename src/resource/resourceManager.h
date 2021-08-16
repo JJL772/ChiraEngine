@@ -8,28 +8,28 @@
 class resourceManager {
 public:
     static unsigned int addShader(shader* s);
-    static std::weak_ptr<shader> getShader(unsigned int id);
-    static const std::vector<std::shared_ptr<shader>>* getShaders();
+    static shader* getShader(unsigned int id);
+    static const std::vector<std::unique_ptr<shader>>* getShaders();
 
     static unsigned int addTexture(texture* t);
-    static std::weak_ptr<texture> getTexture(unsigned int id);
-    static const std::vector<std::shared_ptr<texture>>* getTextures();
+    static texture* getTexture(unsigned int id);
+    static const std::vector<std::unique_ptr<texture>>* getTextures();
 
     static unsigned int addMesh(mesh* t);
-    static std::weak_ptr<mesh> getMesh(unsigned int id);
-    static const std::vector<std::shared_ptr<mesh>>* getMeshes();
+    static mesh* getMesh(unsigned int id);
+    static const std::vector<std::unique_ptr<mesh>>* getMeshes();
 
-    static unsigned int addMaterial(abstractMaterial* t);
-    static std::weak_ptr<abstractMaterial> getMaterial(unsigned int id);
-    static const std::vector<std::shared_ptr<abstractMaterial>>* getMaterials();
+    static unsigned int addMaterial(material* t);
+    static material* getMaterial(unsigned int id);
+    static const std::vector<std::unique_ptr<material>>* getMaterials();
 
     static unsigned int addGenericResource(abstractResource* r);
-    static std::weak_ptr<abstractResource> getGenericResource(unsigned int id);
-    static const std::vector<std::shared_ptr<abstractResource>>* getResources();
+    static abstractResource* getGenericResource(unsigned int id);
+    static const std::vector<std::unique_ptr<abstractResource>>* getResources();
 private:
-    static inline std::vector<std::shared_ptr<shader>> shaders{};
-    static inline std::vector<std::shared_ptr<texture>> textures{};
-    static inline std::vector<std::shared_ptr<mesh>> meshes{};
-    static inline std::vector<std::shared_ptr<abstractMaterial>> materials{};
-    static inline std::vector<std::shared_ptr<abstractResource>> resources{};
+    static inline std::vector<std::unique_ptr<shader>> shaders{};
+    static inline std::vector<std::unique_ptr<texture>> textures{};
+    static inline std::vector<std::unique_ptr<mesh>> meshes{};
+    static inline std::vector<std::unique_ptr<material>> materials{};
+    static inline std::vector<std::unique_ptr<abstractResource>> resources{};
 };

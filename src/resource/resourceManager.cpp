@@ -5,11 +5,11 @@ unsigned int resourceManager::addShader(shader* s) {
     return resourceManager::shaders.size() - 1;
 }
 
-std::weak_ptr<shader> resourceManager::getShader(unsigned int id) {
-    return resourceManager::shaders[id];
+shader* resourceManager::getShader(unsigned int id) {
+    return resourceManager::shaders[id].get();
 }
 
-const std::vector<std::shared_ptr<shader>>* resourceManager::getShaders() {
+const std::vector<std::unique_ptr<shader>>* resourceManager::getShaders() {
     return &resourceManager::shaders;
 }
 
@@ -18,11 +18,11 @@ unsigned int resourceManager::addTexture(texture* t) {
     return resourceManager::textures.size() - 1;
 }
 
-std::weak_ptr<texture> resourceManager::getTexture(unsigned int id) {
-    return resourceManager::textures[id];
+texture* resourceManager::getTexture(unsigned int id) {
+    return resourceManager::textures[id].get();
 }
 
-const std::vector<std::shared_ptr<texture>>* resourceManager::getTextures() {
+const std::vector<std::unique_ptr<texture>>* resourceManager::getTextures() {
     return &resourceManager::textures;
 }
 
@@ -31,24 +31,24 @@ unsigned int resourceManager::addMesh(mesh* m) {
     return resourceManager::meshes.size() - 1;
 }
 
-std::weak_ptr<mesh> resourceManager::getMesh(unsigned int id) {
-    return resourceManager::meshes[id];
+mesh* resourceManager::getMesh(unsigned int id) {
+    return resourceManager::meshes[id].get();
 }
 
-const std::vector<std::shared_ptr<mesh>>* resourceManager::getMeshes() {
+const std::vector<std::unique_ptr<mesh>>* resourceManager::getMeshes() {
     return &resourceManager::meshes;
 }
 
-unsigned int resourceManager::addMaterial(abstractMaterial* m) {
+unsigned int resourceManager::addMaterial(material* m) {
     resourceManager::materials.emplace_back(m);
     return resourceManager::materials.size() - 1;
 }
 
-std::weak_ptr<abstractMaterial> resourceManager::getMaterial(unsigned int id) {
-    return resourceManager::materials[id];
+material* resourceManager::getMaterial(unsigned int id) {
+    return resourceManager::materials[id].get();
 }
 
-const std::vector<std::shared_ptr<abstractMaterial>>* resourceManager::getMaterials() {
+const std::vector<std::unique_ptr<material>>* resourceManager::getMaterials() {
     return &resourceManager::materials;
 }
 
@@ -57,10 +57,10 @@ unsigned int resourceManager::addGenericResource(abstractResource* r) {
     return resourceManager::resources.size() - 1;
 }
 
-std::weak_ptr<abstractResource> resourceManager::getGenericResource(unsigned int id) {
-    return resourceManager::resources[id];
+abstractResource* resourceManager::getGenericResource(unsigned int id) {
+    return resourceManager::resources[id].get();
 }
 
-const std::vector<std::shared_ptr<abstractResource>>* resourceManager::getResources() {
+const std::vector<std::unique_ptr<abstractResource>>* resourceManager::getResources() {
     return &resourceManager::resources;
 }

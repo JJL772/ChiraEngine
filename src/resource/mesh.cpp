@@ -8,7 +8,7 @@ mesh::mesh(abstractMeshLoader* loader, const std::string& filepath_, unsigned in
     this->cullType = cullType_;
     this->loader = loader;
     this->filepath = filepath_;
-    this->material = resourceManager::getMaterial(materialId);
+    this->material = materialId;
 }
 
 mesh::~mesh() {
@@ -20,10 +20,10 @@ mesh::~mesh() {
 }
 
 void mesh::setMaterial(unsigned int materialId) {
-    this->material = resourceManager::getMaterial(materialId);
+    this->material = materialId;
 }
 
-std::weak_ptr<abstractMaterial> mesh::getMaterial() {
+unsigned int mesh::getMaterial() const {
     return this->material;
 }
 
@@ -63,17 +63,8 @@ void mesh::compile() {
 }
 
 void mesh::render() {
-    if (auto mat = this->material.lock()) {
-        mat->use();
-        if (auto shdr = mat->getShader().lock()) {
-            shdr->setUniform("m", &(this->model));
-        } else {
-            chiraLogger::log(ERR, "mesh::render", "Shader is missing");
-        }
-    } else {
-        chiraLogger::log(ERR, "mesh::render", "Material is missing");
-        return;
-    }
+    resourceManager::getMaterial(this->material)->use();
+    resourceManager::getShader(resourceManager::getMaterial(this->material)->getShader())->setUniform("m", &(this->model));
 
     glDepthFunc(this->depthFunc);
     if (this->backfaceCulling) {
