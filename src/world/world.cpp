@@ -25,14 +25,20 @@ void world::deinit(abstractEngine* e) {
 
 abstractCamera* world::getPrimaryCamera() const {
     if (!this->primaryCamera) {
-        chiraLogger::log(WARN, "world::getCamera", "Must set camera in world::setCamera first");
+        chiraLogger::log(WARN, "world::getPrimaryCamera", "Must set camera in world::setPrimaryCamera first");
         return nullptr;
     }
     return this->primaryCamera;
 }
 
-void world::setPrimaryCamera(abstractEngine* e, const std::string& entity) {
-    this->primaryCamera = (abstractCamera*) (((engine*) e)->getEntity(entity));
+void world::setPrimaryCamera(abstractEngine* e, unsigned int entityId) {
+    this->primaryCamera = (abstractCamera*) (((engine*) e)->getEntity(entityId));
 }
 
-// todo: use shared pointers and weak pointers instead of throwing strings everywhere
+void world::addEntity(unsigned int entityId) {
+    this->entities.push_back(entityId);
+}
+
+void world::removeEntity(unsigned int entityId) {
+    this->entities.erase(std::remove(this->entities.begin(), this->entities.end(), entityId), this->entities.end());
+}

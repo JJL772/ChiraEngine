@@ -51,3 +51,5 @@ void texture2d::use() {
     }
     glBindTexture(GL_TEXTURE_2D, this->handle);
 }
+
+void texture2d::discard() {}

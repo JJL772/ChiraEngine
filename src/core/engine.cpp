@@ -5,7 +5,6 @@
 #endif
 
 #include <iostream>
-
 #define IMGUI_USER_CONFIG "../../src/config/imguiConfig.h"
 #include "imgui.h"
 #include "backends/imgui_impl_glfw.h"
@@ -14,6 +13,7 @@
 #include "../loader/image.h"
 #include "../sound/alSoundManager.h"
 #include "../implementation/discordRichPresence.h"
+#include "../resource/resourceManager.h"
 
 engine::engine(const std::string& configPath) {
 #ifdef WIN32
@@ -160,14 +160,14 @@ int vertexAttributes, textureUnits;
 
     this->callRegisteredFunctions(&(this->initFunctions));
 
-    for (const auto& shaderPair : engine::shaders) {
-        shaderPair.second->compile();
+    for (const auto& shader : *resourceManager::getShaders()) {
+        shader->compile();
     }
-    for (const auto& texturePair : engine::textures) {
-        texturePair.second->compile();
+    for (const auto& texture : *resourceManager::getTextures()) {
+        texture->compile();
     }
-    for (const auto& materialPair : engine::materials) {
-        materialPair.second->compile();
+    for (const auto& material : *resourceManager::getMaterials()) {
+        material->compile();
     }
     for (const auto& [name, scriptProvider] : this->scriptProviders) {
         scriptProvider->initProvider();
@@ -184,6 +184,9 @@ int vertexAttributes, textureUnits;
 
         scriptProvider->initScripts();
     }
+    for (const auto& world : engine::worlds) {
+        world->init(this);
+    }
 }
 
 void engine::run() {
@@ -194,8 +197,8 @@ void engine::run() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         this->render();
         // todo: get primary camera
-        this->soundManager->setListenerPosition(this->getWorld("")->getPrimaryCamera()->getPosition());
-        this->soundManager->setListenerRotation(this->getWorld("")->getPrimaryCamera()->getRotation(), this->getWorld("")->getPrimaryCamera()->getUpVector());
+        this->soundManager->setListenerPosition(this->getWorld(0)->getPrimaryCamera()->getPosition());
+        this->soundManager->setListenerRotation(this->getWorld(0)->getPrimaryCamera()->getRotation(), this->getWorld(0)->getPrimaryCamera()->getUpVector());
         this->soundManager->update();
         glfwSwapBuffers(this->window);
         glfwPollEvents();
@@ -212,10 +215,10 @@ void engine::run() {
 void engine::render() {
     this->lastTime = this->currentTime;
     this->currentTime = glfwGetTime();
-    for (const auto& shaderPair : engine::shaders) {
-        // todo: get primary camera
-        shaderPair.second->setUniform("p", this->getWorld("")->getPrimaryCamera()->getProjectionMatrix());
-        shaderPair.second->setUniform("v", this->getWorld("")->getPrimaryCamera()->getViewMatrix());
+    for (const auto& shader : *resourceManager::getShaders()) {
+        // todo: move this to world
+        shader->setUniform("p", this->getWorld(0)->getPrimaryCamera()->getProjectionMatrix());
+        shader->setUniform("v", this->getWorld(0)->getPrimaryCamera()->getViewMatrix());
     }
 
     ImGui_ImplOpenGL3_NewFrame();
@@ -233,9 +236,9 @@ void engine::render() {
     for (const auto& scriptProviderPair : this->scriptProviders) {
         scriptProviderPair.second->render(this->getDeltaTime());
     }
-
-    // todo: this
-    //this->worldPtr->render();
+    for (const auto& world : this->worlds) {
+        world->update(this);
+    }
 
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -244,25 +247,26 @@ void engine::render() {
 void engine::stop() {
     chiraLogger::log(INFO_IMPORTANT, "ChiraEngine", "Gracefully exiting...");
 
+    callRegisteredFunctions(&(this->stopFunctions));
+
     for (const auto& scriptProviderPair : this->scriptProviders) {
         scriptProviderPair.second->stop();
+    }
+    for (const auto& world : this->worlds) {
+        world->deinit(this);
     }
 
     if (discordRichPresence::initialized()) {
         discordRichPresence::shutdown();
     }
 
-    for (const auto& texturePair : engine::textures) {
-        texturePair.second->discard();
+    for (const auto& texture : *resourceManager::getTextures()) {
+        texture->discard();
     }
-    for (const auto& shaderPair : engine::shaders) {
-        shaderPair.second->discard();
+    for (const auto& shader : *resourceManager::getShaders()) {
+        shader->discard();
     }
 
-    callRegisteredFunctions(&(this->stopFunctions));
-
-    // todo: this
-    //this->worldPtr->discard();
     this->soundManager->stop();
 
     ImGui_ImplOpenGL3_Shutdown();
@@ -303,7 +307,9 @@ std::vector<mousebind>* engine::getMousebinds() {
 }
 
 void engine::addScriptProvider(const std::string& name, abstractScriptProvider* scriptProvider) {
-    this->scriptProviders.insert(std::make_pair(name, scriptProvider));
+    if (engine::scriptProviders.count(name) == 0) {
+        this->scriptProviders.insert(std::make_pair(name, scriptProvider));
+    }
 }
 
 abstractScriptProvider* engine::getScriptProvider(const std::string& name) {
@@ -311,7 +317,7 @@ abstractScriptProvider* engine::getScriptProvider(const std::string& name) {
         chiraLogger::log(ERR, "engine::getScriptProvider", "Script provider " + name + " is not recognized, check that you registered it properly");
         return nullptr;
     }
-    return this->scriptProviders.at(name).get();
+    return this->scriptProviders[name].get();
 }
 
 void engine::setSoundManager(abstractSoundManager* newSoundManager) {
@@ -339,85 +345,22 @@ abstractSettingsLoader* engine::getSettingsLoader() {
     return engine::settingsLoader.get();
 }
 
-void engine::addShader(const std::string& name, shader* s) {
-    engine::shaders.insert(std::make_pair(name, s));
+unsigned int engine::addWorld(world* newWorld) {
+    this->worlds.emplace_back(newWorld);
+    return this->worlds.size() - 1;
 }
 
-shader* engine::getShader(const std::string& name) {
-    if (engine::shaders.count(name) == 0) {
-        chiraLogger::log(ERR, "engine::getShader", "Shader " + name + " is not recognized, check that you registered it properly");
-        return nullptr;
-    }
-    return engine::shaders.at(name).get();
+world* engine::getWorld(unsigned int worldId) {
+    return this->worlds[worldId].get();
 }
 
-void engine::addTexture(const std::string& name, texture* t) {
-    engine::textures.insert(std::make_pair(name, t));
+unsigned int engine::addEntity(entity* newEntity) {
+    this->entities.emplace_back(newEntity);
+    return this->entities.size() - 1;
 }
 
-texture* engine::getTexture(const std::string& name) {
-    if (engine::textures.count(name) == 0) {
-        chiraLogger::log(ERR, "engine::getTexture", "Texture " + name + " is not recognized, check that you registered it properly");
-        return nullptr;
-    }
-    return engine::textures.at(name).get();
-}
-
-void engine::addMesh(const std::string& name, mesh* m) {
-    engine::meshes.insert(std::make_pair(name, m));
-}
-
-mesh* engine::getMesh(const std::string& name) {
-    if (engine::meshes.count(name) == 0) {
-        chiraLogger::log(ERR, "engine::getMesh", "Mesh " + name + " is not recognized, check that you registered it properly");
-        return nullptr;
-    }
-    return engine::meshes.at(name).get();
-}
-
-void engine::addMaterial(const std::string& name, abstractMaterial* m) {
-    engine::materials.insert(std::make_pair(name, m));
-}
-
-abstractMaterial* engine::getMaterial(const std::string& name) {
-    if (engine::materials.count(name) == 0) {
-        chiraLogger::log(ERR, "engine::getMaterial", "Material " + name + " is not recognized, check that you registered it properly");
-        return nullptr;
-    }
-    return engine::materials.at(name).get();
-}
-
-void engine::addGenericResource(const std::string& name, abstractResource* r) {
-    engine::resources.insert(std::make_pair(name, r));
-}
-
-abstractResource* engine::getGenericResource(const std::string& name) {
-    if (engine::resources.count(name) == 0) {
-        chiraLogger::log(ERR, "engine::getMaterial", "Material " + name + " is not recognized, check that you registered it properly");
-    }
-    return engine::resources.at(name).get();
-}
-
-void engine::addWorld(const std::string& name, world* newWorld) {
-    // todo: add world
-}
-
-world* engine::getWorld(const std::string& name) {
-    // todo: get world
-    return nullptr;
-}
-
-void engine::addEntity(const std::string& world, const std::string& name, entity* newEntity) {
-    // todo: add entity
-}
-
-void engine::addEntity(const std::string& name, entity* newEntity) {
-    // todo: add entity
-}
-
-entity* engine::getEntity(const std::string& name) {
-    // todo: get entity
-    return nullptr;
+entity* engine::getEntity(unsigned int entityId) {
+    return this->entities[entityId].get();
 }
 
 void engine::setBackgroundColor(float r, float g, float b, float a) {

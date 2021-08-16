@@ -8,10 +8,10 @@
 
 class abstractMaterial : public abstractResource {
 public:
-    explicit abstractMaterial(const std::string& shader_);
+    explicit abstractMaterial(unsigned int shaderId);
     virtual void use() = 0;
     void discard() override {}
-    virtual shader* getShader();
+    virtual const std::weak_ptr<shader>& getShader();
 protected:
-    std::string shaderName;
+    std::weak_ptr<shader> shader;
 };

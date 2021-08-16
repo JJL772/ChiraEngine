@@ -31,31 +31,31 @@ void freecam::setupKeybinds(abstractEngine* e) const {
     // todo: get primary camera
     auto* engine = (class engine*) e;
     engine->addKeybind(keybind(GLFW_KEY_W, GLFW_REPEAT,[](class engine* e) {
-        auto* cam = (freecam*) e->getWorld("")->getPrimaryCamera();
+        auto* cam = (freecam*) e->getWorld(0)->getPrimaryCamera();
         if (cam->isCurrent() && cam->isActive()) cam->translateLocal(ZP, e->getDeltaTime());
     }));
     engine->addKeybind(keybind(GLFW_KEY_S, GLFW_REPEAT,[](class engine* e) {
-        auto* cam = (freecam*) e->getWorld("")->getPrimaryCamera();
+        auto* cam = (freecam*) e->getWorld(0)->getPrimaryCamera();
         if (cam->isCurrent() && cam->isActive()) cam->translateLocal(ZN, e->getDeltaTime());
     }));
     engine->addKeybind(keybind(GLFW_KEY_A, GLFW_REPEAT,[](class engine* e) {
-        auto* cam = (freecam*) e->getWorld("")->getPrimaryCamera();
+        auto* cam = (freecam*) e->getWorld(0)->getPrimaryCamera();
         if (cam->isCurrent() && cam->isActive()) cam->translateLocal(XP, e->getDeltaTime());
     }));
     engine->addKeybind(keybind(GLFW_KEY_D, GLFW_REPEAT,[](class engine* e) {
-        auto* cam = (freecam*) e->getWorld("")->getPrimaryCamera();
+        auto* cam = (freecam*) e->getWorld(0)->getPrimaryCamera();
         if (cam->isCurrent() && cam->isActive()) cam->translateLocal(XN, e->getDeltaTime());
     }));
     engine->addKeybind(keybind(GLFW_KEY_SPACE, GLFW_REPEAT,[](class engine* e) {
-        auto* cam = (freecam*) e->getWorld("")->getPrimaryCamera();
+        auto* cam = (freecam*) e->getWorld(0)->getPrimaryCamera();
         if (cam->isCurrent() && cam->isActive()) cam->translateLocal(YP, e->getDeltaTime());
     }));
     engine->addKeybind(keybind(GLFW_KEY_LEFT_SHIFT, GLFW_REPEAT,[](class engine* e) {
-        auto* cam = (freecam*) e->getWorld("")->getPrimaryCamera();
+        auto* cam = (freecam*) e->getWorld(0)->getPrimaryCamera();
         if (cam->isCurrent() && cam->isActive()) cam->translateLocal(YN, e->getDeltaTime());
     }));
     engine->addMousebind(mousebind(MOVE, [this](class engine* e, double xOffset, double yOffset) {
-        auto* cam = (freecam*) e->getWorld("")->getPrimaryCamera();
+        auto* cam = (freecam*) e->getWorld(0)->getPrimaryCamera();
         if (cam->isCurrent() && cam->isActive()) {
             xOffset *= this->mouseSensitivity;
             yOffset *= this->mouseSensitivity;
@@ -75,7 +75,7 @@ void freecam::setupKeybinds(abstractEngine* e) const {
     }));
     engine->addKeybind(keybind(GLFW_KEY_TAB, GLFW_PRESS, [](class engine* e) {
         // todo: get primary camera
-        auto* cam = (freecam*) e->getWorld("")->getPrimaryCamera();
+        auto* cam = (freecam*) e->getWorld(0)->getPrimaryCamera();
         if (cam->capturedMouse) {
             e->captureMouse(false);
             cam->setActive(false);

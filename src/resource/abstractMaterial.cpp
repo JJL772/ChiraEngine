@@ -1,10 +1,11 @@
 #include "abstractMaterial.h"
 #include "../core/engine.h"
+#include "resourceManager.h"
 
-abstractMaterial::abstractMaterial(const std::string& shader_) : abstractResource() {
-    this->shaderName = shader_;
+abstractMaterial::abstractMaterial(unsigned int shaderId) : abstractResource() {
+    this->shader = resourceManager::getShader(shaderId);
 }
 
-shader* abstractMaterial::getShader() {
-    return engine::getShader(this->shaderName);
+const std::weak_ptr<shader>& abstractMaterial::getShader() {
+    return this->shader;
 }

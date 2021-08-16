@@ -10,7 +10,6 @@
 #include <memory>
 #include "../resource/shader.h"
 #include "../resource/texture.h"
-#include "../component/mesh.h"
 #include "../input/keybind.h"
 #include "../input/mousebind.h"
 #include "../loader/abstractSettingsLoader.h"
@@ -25,6 +24,7 @@
 #include "../resource/abstractResource.h"
 #include "../resource/abstractMaterial.h"
 #include "../component/abstractComponent.h"
+#include "../resource/mesh.h"
 
 class keybind;
 class mousebind;
@@ -54,22 +54,10 @@ public:
     static void setSettingsLoader(abstractSettingsLoader* settingsLoader);
     static abstractSettingsLoader* getSettingsLoader();
 
-    static void addShader(const std::string& name, shader* s);
-    static shader* getShader(const std::string& name);
-    static void addTexture(const std::string& name, texture* t);
-    static texture* getTexture(const std::string& name);
-    static void addMesh(const std::string& name, mesh* t);
-    static mesh* getMesh(const std::string& name);
-    static void addMaterial(const std::string& name, abstractMaterial* t);
-    static abstractMaterial* getMaterial(const std::string& name);
-    static void addGenericResource(const std::string& name, abstractResource* r);
-    static abstractResource* getGenericResource(const std::string& name);
-
-    void addWorld(const std::string& name, world* newWorld);
-    world* getWorld(const std::string& name);
-    void addEntity(const std::string& world, const std::string& name, entity* newEntity);
-    void addEntity(const std::string& name, entity* newEntity);
-    entity* getEntity(const std::string& entity);
+    unsigned int addWorld(world* newWorld);
+    world* getWorld(unsigned int worldId);
+    unsigned int addEntity(entity* newEntity);
+    entity* getEntity(unsigned int entityId);
 
     static void setBackgroundColor(float r, float g, float b, float a);
 
@@ -97,11 +85,8 @@ private:
 
     static inline std::unique_ptr<abstractSettingsLoader> settingsLoader = nullptr;
 
-    static inline std::unordered_map<std::string, std::unique_ptr<shader>> shaders{};
-    static inline std::unordered_map<std::string, std::unique_ptr<texture>> textures{};
-    static inline std::unordered_map<std::string, std::unique_ptr<mesh>> meshes{};
-    static inline std::unordered_map<std::string, std::unique_ptr<abstractMaterial>> materials{};
-    static inline std::unordered_map<std::string, std::unique_ptr<abstractResource>> resources{};
+    std::vector<std::unique_ptr<world>> worlds{};
+    std::vector<std::unique_ptr<entity>> entities{};
 
     bool started = false;
     bool mouseCaptured = false;

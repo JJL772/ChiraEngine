@@ -4,32 +4,63 @@
 
 #include "abstractMaterial.h"
 #include "../core/engine.h"
+#include "resourceManager.h"
 
 class phongMaterial : public abstractMaterial {
 public:
-    phongMaterial(const std::string& shader_, std::string diffuse_, std::string specular_) : abstractMaterial(shader_), diffuse(std::move(diffuse_)), specular(std::move(specular_)) {
-        engine::getTexture(this->diffuse)->setTextureUnit(GL_TEXTURE0);
-        engine::getTexture(this->specular)->setTextureUnit(GL_TEXTURE1);
+    phongMaterial(unsigned int shader_, unsigned int diffuseId, unsigned int specularId) : abstractMaterial(shader_) {
+        this->diffuse = resourceManager::getTexture(diffuseId);
+        this->specular = resourceManager::getTexture(specularId);
+        auto dif = this->diffuse.lock();
+        auto spec = this->specular.lock();
+        if (dif && spec) {
+            dif->setTextureUnit(GL_TEXTURE0);
+            spec->setTextureUnit(GL_TEXTURE1);
+        } else {
+            chiraLogger::log(ERR, "phongMaterial::ctor", "Diffuse texture and/or specular texture missing");
+        }
     }
     void compile() override {
-        engine::getShader(this->shaderName)->use();
-        engine::getShader(this->shaderName)->setUniform("material.diffuse", 0);
-        engine::getShader(this->shaderName)->setUniform("material.specular", 1);
+        auto shdr = this->shader.lock();
+        if (shdr) {
+            shdr->use();
+            shdr->setUniform("material.diffuse", 0);
+            shdr->setUniform("material.specular", 1);
+        } else {
+            chiraLogger::log(ERR, "phongMaterial::compile", "Shader missing");
+        }
     }
     void use() override {
-        engine::getTexture(this->diffuse)->use();
-        engine::getTexture(this->specular)->use();
-        engine::getShader(this->shaderName)->use();
+        auto dif = this->diffuse.lock();
+        auto spec = this->specular.lock();
+        auto shdr = this->shader.lock();
+        if (dif && spec && shdr) {
+            dif->use();
+            spec->use();
+            shdr->use();
+        } else {
+            chiraLogger::log(ERR, "phongMaterial::use", "Shader, diffuse texture and/or specular texture missing");
+        }
     }
     void setShininess(float shininess = 32.0f) {
-        engine::getShader(this->shaderName)->use();
-        engine::getShader(this->shaderName)->setUniform("material.shininess", shininess);
+        auto shdr = this->shader.lock();
+        if (shdr) {
+            shdr->use();
+            shdr->setUniform("material.shininess", shininess);
+        } else {
+            chiraLogger::log(ERR, "phongMaterial::setShininess", "Shader missing");
+        }
     }
     void setLambertFactor(float lambertFactor = 1.0f) {
-        engine::getShader(this->shaderName)->use();
-        engine::getShader(this->shaderName)->setUniform("material.lambertFactor", lambertFactor);
+        auto shdr = this->shader.lock();
+        if (shdr) {
+            shdr->use();
+            shdr->setUniform("material.lambertFactor", lambertFactor);
+        } else {
+            chiraLogger::log(ERR, "phongMaterial::setLambertFactor", "Shader missing");
+        }
     }
 private:
-    std::string diffuse;
-    std::string specular;
+    std::weak_ptr<texture> diffuse;
+    std::weak_ptr<texture> specular;
 };

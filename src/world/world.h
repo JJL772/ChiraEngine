@@ -5,7 +5,6 @@
 #include <vector>
 #include <glm/vec3.hpp>
 #include "../entity/abstractCamera.h"
-#include "../entity/light.h"
 #include "../core/abstractEngine.h"
 
 class world {
@@ -15,8 +14,10 @@ public:
     void deinit(abstractEngine* e);
 
     [[nodiscard]] abstractCamera* getPrimaryCamera() const;
-    void setPrimaryCamera(abstractEngine* e, const std::string& entity);
+    void setPrimaryCamera(abstractEngine* e, unsigned int entityId);
+    void addEntity(unsigned int entityId);
+    void removeEntity(unsigned int entityId);
 private:
     abstractCamera* primaryCamera = nullptr;
-    std::vector<std::string> entities;
+    std::vector<unsigned int> entities;
 };

@@ -1,21 +1,20 @@
 #include "../src/core/engine.h"
-/*
-#include "../src/render/texture2d.h"
+
+#include "../src/resource/texture2d.h"
 #include "../src/loader/objMeshLoader.h"
-#include "../src/render/freecam.h"
+#include "../src/entity/freecam.h"
 #include "../src/sound/oggFileSound.h"
-#include "../src/render/phongMaterial.h"
+#include "../src/resource/phongMaterial.h"
 #include "../src/implementation/discordRichPresence.h"
-*/
 
 int main() {
-    chiraLogger::log(INFO, "Demo", "Builds");
-    /*
     engine engine;
+
+    /*
     virtualFileSystem::addResourceDirectory("resources/demo/");
 
     objMeshLoader objMeshLoader;
-    engine.getSettingsLoader()->setValue("engine", "title", std::string("Demo Window"), true, true);
+    engine::getSettingsLoader()->setValue("engine", "title", std::string("Demo Window"), true, true);
 
     engine.addKeybind(keybind(GLFW_KEY_ESCAPE, GLFW_PRESS, [](class engine* e) {
         e->stop();
@@ -46,11 +45,13 @@ int main() {
         discordRichPresence::setState("https://discord.gg/ASgHFkX");
 
         e->captureMouse(true);
-        e->setWorld(new world{e, new freecam{e}});
-        e->getWorld()->addMesh("cube");
+        e->addEntity("cube", new entity{});
+        e->getEntity("cube")->addComponent(e, "mesh", new meshComponent{});
+        e->addWorld("", new world{});
+        e->getWorld("")->addEntity("cube");
 
         bool angelscriptEnabled = true;
-        e->getSettingsLoader()->getValue("scripting", "angelscript", &angelscriptEnabled);
+        engine::getSettingsLoader()->getValue("scripting", "angelscript", &angelscriptEnabled);
         if (angelscriptEnabled) {
             ((angelscriptProvider*) e->getScriptProvider("angelscript"))->addScript(new angelscriptHolder{"testScript.as"});
         }
