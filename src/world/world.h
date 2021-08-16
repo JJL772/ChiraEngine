@@ -4,11 +4,11 @@
 #include <string>
 #include <vector>
 #include <glm/vec3.hpp>
-#include "../render/abstractCamera.h"
-#include "../render/light.h"
+#include "../resource/abstractCamera.h"
+#include "../resource/light.h"
 #include "../core/engine.h"
 
-class world : public resource {
+class world : public abstractResource {
 public:
     world(class engine* e, abstractCamera* camera);
     virtual ~world();

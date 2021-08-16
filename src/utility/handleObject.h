@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../core/resource.h"
+#include "../resource/abstractResource.h"
 
-class handleObject : public resource {
+class handleObject : public abstractResource {
 public:
-    handleObject(): resource() {}
+    handleObject(): abstractResource() {}
     [[nodiscard]] int getHandle() const {
         return this->handle;
     }

@@ -7,13 +7,13 @@
 #include <functional>
 #include <vector>
 #include <memory>
-#include "../render/shader.h"
-#include "../render/texture.h"
-#include "../render/mesh.h"
+#include "../resource/shader.h"
+#include "../resource/texture.h"
+#include "../resource/mesh.h"
 #include "../input/keybind.h"
 #include "../input/mousebind.h"
 #include "../loader/abstractSettingsLoader.h"
-#include "../render/abstractCamera.h"
+#include "../resource/abstractCamera.h"
 #include "../script/abstractScriptProvider.h"
 #include "../script/angelscriptProvider.h"
 #include "../sound/abstractSoundManager.h"
@@ -21,13 +21,14 @@
 #include "../utility/logger.h"
 #include "../world/world.h"
 #include "../entity/entity.h"
-#include "resource.h"
-#include "../render/abstractMaterial.h"
+#include "../resource/abstractResource.h"
+#include "../resource/abstractMaterial.h"
 #include "../component/abstractComponent.h"
 
 class keybind;
 class mousebind;
 class world;
+class entity;
 
 class engine {
 public:
@@ -62,8 +63,8 @@ public:
     static mesh* getMesh(const std::string& name);
     static void addMaterial(const std::string& name, abstractMaterial* t);
     static abstractMaterial* getMaterial(const std::string& name);
-    static void addGenericResource(const std::string& name, resource* r);
-    static resource* getGenericResource(const std::string& name);
+    static void addGenericResource(const std::string& name, abstractResource* r);
+    static abstractResource* getGenericResource(const std::string& name);
 
     void addWorld(const std::string& name, world* newWorld);
     world* getWorld(const std::string& name);
@@ -101,7 +102,7 @@ private:
     static inline std::unordered_map<std::string, std::unique_ptr<texture>> textures{};
     static inline std::unordered_map<std::string, std::unique_ptr<mesh>> meshes{};
     static inline std::unordered_map<std::string, std::unique_ptr<abstractMaterial>> materials{};
-    static inline std::unordered_map<std::string, std::unique_ptr<resource>> resources{};
+    static inline std::unordered_map<std::string, std::unique_ptr<abstractResource>> resources{};
 
     bool started = false;
     bool mouseCaptured = false;
