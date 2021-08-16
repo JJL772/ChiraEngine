@@ -4,7 +4,7 @@
 #include "../loader/image.h"
 #include "../utility/virtualFileSystem.h"
 
-texture::texture(const std::string& filepath): abstractResource() {
+texture::texture(const std::string& filepath) : abstractResource() {
     int w, h, bd;
     this->file = std::make_unique<image>(virtualFileSystem::getTexturePath(filepath), &w, &h, &bd, 0);
     this->width = w;

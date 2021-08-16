@@ -4,27 +4,19 @@
 #include <string>
 #include <vector>
 #include <glm/vec3.hpp>
-#include "../resource/abstractCamera.h"
-#include "../resource/light.h"
-#include "../core/engine.h"
+#include "../entity/abstractCamera.h"
+#include "../entity/light.h"
+#include "../core/abstractEngine.h"
 
-class world : public abstractResource {
+class world {
 public:
-    world(class engine* e, abstractCamera* camera);
-    virtual ~world();
-    [[nodiscard]] abstractCamera* getCamera() const;
-    void setCamera(abstractCamera* newCamera);
-    void addMesh(const std::string& mesh);
-    unsigned int addLight(abstractLight* light);
-    abstractLight* getLight(unsigned int lightId);
-    void compile() override;
-    void discard() override;
-    void render();
+    void init(abstractEngine* e);
+    void update(abstractEngine* e);
+    void deinit(abstractEngine* e);
+
+    [[nodiscard]] abstractCamera* getPrimaryCamera() const;
+    void setPrimaryCamera(abstractEngine* e, const std::string& entity);
 private:
-    bool compiled = false;
-    bool lightsDirty = false;
-    engine* enginePtr;
-    abstractCamera* camera = nullptr;
-    std::vector<std::string> meshes{};
-    std::vector<std::unique_ptr<abstractLight>> lights;
+    abstractCamera* primaryCamera = nullptr;
+    std::vector<std::string> entities;
 };

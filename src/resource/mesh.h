@@ -6,7 +6,7 @@
 #include <glm/glm.hpp>
 #include "../resource/abstractResource.h"
 #include "../loader/abstractMeshLoader.h"
-#include "abstractMaterial.h"
+#include "../resource/abstractMaterial.h"
 
 class mesh : public abstractResource {
 public:

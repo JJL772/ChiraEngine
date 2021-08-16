@@ -10,7 +10,4 @@ public:
     void use() override {
         engine::getShader(this->shaderName)->use();
     }
-    void updateLighting(const std::vector<std::unique_ptr<abstractLight>>& lights) override {
-        // Unlit lol
-    }
 };

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "abstractEngine.h"
 #include "glad/gl.h"
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
@@ -9,11 +10,11 @@
 #include <memory>
 #include "../resource/shader.h"
 #include "../resource/texture.h"
-#include "../resource/mesh.h"
+#include "../component/mesh.h"
 #include "../input/keybind.h"
 #include "../input/mousebind.h"
 #include "../loader/abstractSettingsLoader.h"
-#include "../resource/abstractCamera.h"
+#include "../entity/abstractCamera.h"
 #include "../script/abstractScriptProvider.h"
 #include "../script/angelscriptProvider.h"
 #include "../sound/abstractSoundManager.h"
@@ -27,10 +28,8 @@
 
 class keybind;
 class mousebind;
-class world;
-class entity;
 
-class engine {
+class engine : public abstractEngine {
 public:
     explicit engine(const std::string& configPath = "settings.json");
 

@@ -29,9 +29,6 @@ public:
         engine::getShader(this->shaderName)->use();
         engine::getShader(this->shaderName)->setUniform("material.lambertFactor", lambertFactor);
     }
-    void updateLighting(const std::vector<std::unique_ptr<abstractLight>>& lights) override {
-        // todo: pass all lighting info to the material (this one)
-    }
 private:
     std::string diffuse;
     std::string specular;

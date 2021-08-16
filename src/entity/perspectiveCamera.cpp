@@ -1,11 +1,13 @@
 #include "perspectiveCamera.h"
+
+#include "../core/engine.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 #pragma ide diagnostic ignored "cppcoreguidelines-pro-type-member-init"
-perspectiveCamera::perspectiveCamera(engine* engine, float newYaw, float newPitch, glm::vec3 newPosition, glm::vec3 currentUp, float newZoom) :
+perspectiveCamera::perspectiveCamera(abstractEngine* engine, float newYaw, float newPitch, glm::vec3 newPosition, glm::vec3 currentUp, float newZoom) :
                                      yaw{newYaw}, pitch{newPitch}, position{newPosition}, worldUp{currentUp}, front{glm::vec3(0.0f, 0.0f, -1.0f)}, zoom{newZoom} {}
 
-void perspectiveCamera::init(engine* engine) {
+void perspectiveCamera::init(abstractEngine* engine) {
     int windowWidth = 1600;
     engine::getSettingsLoader()->getValue("graphics", "windowWidth", &windowWidth);
     int windowHeight = 900;

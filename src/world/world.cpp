@@ -1,80 +1,38 @@
 #include "world.h"
 
-world::world(engine* e, abstractCamera* camera) {
-    this->enginePtr = e;
-    this->setCamera(camera);
-}
+#include "../core/engine.h"
 
-world::~world() {
-    delete this->camera;
-    if (this->compiled) {
-        for (const auto& string : this->meshes) {
-            engine::getMesh(string)->discard();
-        }
+void world::init(abstractEngine* e) {
+    auto* en = (engine*) e;
+    for (const auto& name : this->entities) {
+        en->getEntity(name)->init(e);
     }
 }
 
-abstractCamera* world::getCamera() const {
-    if (!this->camera) {
+void world::update(abstractEngine* e) {
+    auto* en = (engine*) e;
+    for (const auto& name : this->entities) {
+        en->getEntity(name)->update(e);
+    }
+}
+
+void world::deinit(abstractEngine* e) {
+    auto* en = (engine*) e;
+    for (const auto& name : this->entities) {
+        en->getEntity(name)->update(e);
+    }
+}
+
+abstractCamera* world::getPrimaryCamera() const {
+    if (!this->primaryCamera) {
         chiraLogger::log(WARN, "world::getCamera", "Must set camera in world::setCamera first");
         return nullptr;
     }
-    return this->camera;
+    return this->primaryCamera;
 }
 
-void world::setCamera(abstractCamera* newCamera) {
-    if (this->camera) {
-        this->camera->setCurrent(false);
-    }
-    this->camera = newCamera;
-    this->camera->init(this->enginePtr);
-    this->camera->setCurrent(true);
+void world::setPrimaryCamera(abstractEngine* e, const std::string& entity) {
+    this->primaryCamera = (abstractCamera*) (((engine*) e)->getEntity(entity));
 }
 
-void world::addMesh(const std::string& mesh) {
-    this->meshes.push_back(mesh);
-    if (this->compiled) {
-        engine::getMesh(mesh)->compile();
-    }
-}
-
-unsigned int world::addLight(abstractLight* light) {
-    this->lights.emplace_back(light);
-    this->lightsDirty = true;
-    return this->lights.size() - 1;
-}
-
-abstractLight* world::getLight(unsigned int lightId) {
-    return this->lights.at(lightId).get();
-}
-
-void world::compile() {
-    if (!this->compiled) {
-        for (const auto& string : this->meshes) {
-            engine::getMesh(string)->compile();
-        }
-        this->compiled = true;
-    }
-}
-
-void world::discard() {
-    if (this->compiled) {
-        for (const auto& string : this->meshes) {
-            engine::getMesh(string)->discard();
-        }
-        this->compiled = false;
-    }
-}
-
-void world::render() {
-    if (!this->compiled) {
-        this->compile();
-    }
-    for (const auto& string : this->meshes) {
-        if (this->lightsDirty) {
-            engine::getMesh(string)->getMaterial()->updateLighting(this->lights);
-            this->lightsDirty = false;
-        }
-        engine::getMesh(string)->render();
-    }
-}
+// todo: use shared pointers and weak pointers instead of throwing strings everywhere

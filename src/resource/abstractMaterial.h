@@ -3,15 +3,14 @@
 #include <string>
 #include <vector>
 #include <memory>
-#include "light.h"
 #include "shader.h"
+#include "abstractResource.h"
 
-class abstractMaterial {
+class abstractMaterial : public abstractResource {
 public:
     explicit abstractMaterial(const std::string& shader_);
     virtual void use() = 0;
-    virtual void compile() = 0;
-    virtual void updateLighting(const std::vector<std::unique_ptr<abstractLight>>& lights) = 0;
+    void discard() override {}
     virtual shader* getShader();
 protected:
     std::string shaderName;

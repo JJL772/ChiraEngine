@@ -1,4 +1,5 @@
 #include "texture2d.h"
+
 #include "../utility/logger.h"
 
 texture2d::texture2d(const std::string& file, int format, int wrapModeU, int wrapModeV, int filterMode, bool mipmaps) : texture(file) {

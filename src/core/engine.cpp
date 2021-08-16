@@ -194,8 +194,8 @@ void engine::run() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         this->render();
         // todo: get primary camera
-        this->soundManager->setListenerPosition(this->getWorld("")->getCamera()->getPosition());
-        this->soundManager->setListenerRotation(this->getWorld("")->getCamera()->getRotation(), this->getWorld("")->getCamera()->getUpVector());
+        this->soundManager->setListenerPosition(this->getWorld("")->getPrimaryCamera()->getPosition());
+        this->soundManager->setListenerRotation(this->getWorld("")->getPrimaryCamera()->getRotation(), this->getWorld("")->getPrimaryCamera()->getUpVector());
         this->soundManager->update();
         glfwSwapBuffers(this->window);
         glfwPollEvents();
@@ -214,8 +214,8 @@ void engine::render() {
     this->currentTime = glfwGetTime();
     for (const auto& shaderPair : engine::shaders) {
         // todo: get primary camera
-        shaderPair.second->setUniform("p", this->getWorld("")->getCamera()->getProjectionMatrix());
-        shaderPair.second->setUniform("v", this->getWorld("")->getCamera()->getViewMatrix());
+        shaderPair.second->setUniform("p", this->getWorld("")->getPrimaryCamera()->getProjectionMatrix());
+        shaderPair.second->setUniform("v", this->getWorld("")->getPrimaryCamera()->getViewMatrix());
     }
 
     ImGui_ImplOpenGL3_NewFrame();
@@ -405,6 +405,10 @@ void engine::addWorld(const std::string& name, world* newWorld) {
 world* engine::getWorld(const std::string& name) {
     // todo: get world
     return nullptr;
+}
+
+void engine::addEntity(const std::string& world, const std::string& name, entity* newEntity) {
+    // todo: add entity
 }
 
 void engine::addEntity(const std::string& name, entity* newEntity) {

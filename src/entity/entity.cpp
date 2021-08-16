@@ -1,24 +1,25 @@
 #include "entity.h"
+#include "../utility/logger.h"
 
-void entity::init(engine* e) {
+void entity::init(abstractEngine* e) {
     for (const auto& componentPair : this->components) {
         componentPair.second->init(e);
     }
 }
 
-void entity::update(engine* e) {
+void entity::update(abstractEngine* e) {
     for (const auto& componentPair : this->components) {
         componentPair.second->update(e);
     }
 }
 
-void entity::deinit(engine* e) {
+void entity::deinit(abstractEngine* e) {
     for (const auto& componentPair : this->components) {
         componentPair.second->deinit(e);
     }
 }
 
-void entity::addComponent(engine* e, const std::string& name, abstractComponent* component) {
+void entity::addComponent(abstractEngine* e, const std::string& name, abstractComponent* component) {
     if (this->components.count(name) > 0) {
         this->components[name]->deinit(e);
         this->components[name].reset(component);

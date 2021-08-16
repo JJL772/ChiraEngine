@@ -2,12 +2,10 @@
 
 #include <glm/glm.hpp>
 #include "../utility/axis.h"
-#include "../core/engine.h"
+#include "entity.h"
 
-class abstractCamera {
+class abstractCamera : public entity {
 public:
-    virtual ~abstractCamera() = default;
-    virtual void init(engine* engine) = 0;
     virtual void translate(glm::vec3 offset, float amount, double delta) = 0;
     virtual void rotate(float rotation, axis rotationAxis, double delta) = 0;
     virtual void setPosition(glm::vec3 position) = 0;

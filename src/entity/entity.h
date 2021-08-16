@@ -5,15 +5,13 @@
 #include <string>
 #include "../component/abstractComponent.h"
 
-class abstractComponent;
-
 class entity {
 public:
-    virtual void init(engine* e);
-    virtual void update(engine* e);
-    virtual void deinit(engine* e);
+    virtual void init(abstractEngine* e);
+    virtual void update(abstractEngine* e);
+    virtual void deinit(abstractEngine* e);
 
-    void addComponent(engine* e, const std::string& name, abstractComponent* component);
+    void addComponent(abstractEngine* e, const std::string& name, abstractComponent* component);
     abstractComponent* getComponent(const std::string& name);
 private:
     std::unordered_map<std::string,std::unique_ptr<abstractComponent>> components;
