@@ -22,3 +22,6 @@
 [submodule "src/third_party/discord"]
 	path = src/third_party/discord
 	url = https://github.com/discord/discord-rpc
+[submodule "src/third_party/stduuid"]
+	path = src/third_party/stduuid
+	url = https://github.com/mariusbancila/stduuid
