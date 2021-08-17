@@ -4,32 +4,20 @@
 #include "shader.h"
 #include "texture.h"
 #include "mesh.h"
+#include "../implementation/uuidProvider.h"
 
 class resourceManager {
 public:
-    static unsigned int addShader(shader* s);
-    static shader* getShader(unsigned int id);
-    static const std::vector<std::unique_ptr<shader>>* getShaders();
+    static shader* getShader(const uuids::uuid& id);
+    static texture* getTexture(const uuids::uuid& id);
+    static mesh* getMesh(const uuids::uuid& id);
+    static material* getMaterial(const uuids::uuid& id);
 
-    static unsigned int addTexture(texture* t);
-    static texture* getTexture(unsigned int id);
-    static const std::vector<std::unique_ptr<texture>>* getTextures();
+    static uuids::uuid addResource(abstractResource* r);
+    static abstractResource* getResource(const uuids::uuid& id);
+    static void removeResource(const uuids::uuid& id);
 
-    static unsigned int addMesh(mesh* t);
-    static mesh* getMesh(unsigned int id);
-    static const std::vector<std::unique_ptr<mesh>>* getMeshes();
-
-    static unsigned int addMaterial(material* t);
-    static material* getMaterial(unsigned int id);
-    static const std::vector<std::unique_ptr<material>>* getMaterials();
-
-    static unsigned int addGenericResource(abstractResource* r);
-    static abstractResource* getGenericResource(unsigned int id);
-    static const std::vector<std::unique_ptr<abstractResource>>* getResources();
+    static const std::unordered_map<uuids::uuid, std::unique_ptr<abstractResource>>* getResources();
 private:
-    static inline std::vector<std::unique_ptr<shader>> shaders{};
-    static inline std::vector<std::unique_ptr<texture>> textures{};
-    static inline std::vector<std::unique_ptr<mesh>> meshes{};
-    static inline std::vector<std::unique_ptr<material>> materials{};
-    static inline std::vector<std::unique_ptr<abstractResource>> resources{};
+    static inline std::unordered_map<uuids::uuid, std::unique_ptr<abstractResource>> resources{};
 };

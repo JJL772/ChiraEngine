@@ -7,7 +7,7 @@
 
 class phongMaterial : public material {
 public:
-    phongMaterial(unsigned int shader_, unsigned int diffuseId, unsigned int specularId) : material(shader_), diffuse(diffuseId), specular(specularId) {
+    phongMaterial(const uuids::uuid& shader_, const uuids::uuid& diffuseId, const uuids::uuid& specularId) : material(shader_), diffuse(diffuseId), specular(specularId) {
         resourceManager::getTexture(this->diffuse)->setTextureUnit(GL_TEXTURE0);
         resourceManager::getTexture(this->specular)->setTextureUnit(GL_TEXTURE1);
     }
@@ -33,6 +33,6 @@ public:
         s->setUniform("material.lambertFactor", lambertFactor);
     }
 private:
-    unsigned int diffuse;
-    unsigned int specular;
+    uuids::uuid diffuse;
+    uuids::uuid specular;
 };

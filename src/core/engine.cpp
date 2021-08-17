@@ -160,15 +160,18 @@ int vertexAttributes, textureUnits;
 
     this->callRegisteredFunctions(&(this->initFunctions));
 
+    // todo
+    /*
     for (const auto& shader : *resourceManager::getShaders()) {
-        shader->compile();
+        shader.second->compile();
     }
     for (const auto& texture : *resourceManager::getTextures()) {
-        texture->compile();
+        texture.second->compile();
     }
     for (const auto& material : *resourceManager::getMaterials()) {
-        material->compile();
+        material.second->compile();
     }
+    */
     for (const auto& [name, scriptProvider] : this->scriptProviders) {
         scriptProvider->initProvider();
 
@@ -184,9 +187,10 @@ int vertexAttributes, textureUnits;
 
         scriptProvider->initScripts();
     }
-    for (const auto& world : engine::worlds) {
-        world->init(this);
-    }
+    // todo
+    //for (const auto& world : engine::worlds) {
+    //    world->init(this);
+    //}
 }
 
 void engine::run() {
@@ -197,8 +201,8 @@ void engine::run() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         this->render();
         // todo: get primary camera
-        this->soundManager->setListenerPosition(this->getWorld(0)->getPrimaryCamera()->getPosition());
-        this->soundManager->setListenerRotation(this->getWorld(0)->getPrimaryCamera()->getRotation(), this->getWorld(0)->getPrimaryCamera()->getUpVector());
+        //this->soundManager->setListenerPosition(this->getWorld(0)->getPrimaryCamera()->getPosition());
+        //this->soundManager->setListenerRotation(this->getWorld(0)->getPrimaryCamera()->getRotation(), this->getWorld(0)->getPrimaryCamera()->getUpVector());
         this->soundManager->update();
         glfwSwapBuffers(this->window);
         glfwPollEvents();
@@ -215,11 +219,13 @@ void engine::run() {
 void engine::render() {
     this->lastTime = this->currentTime;
     this->currentTime = glfwGetTime();
+    /*
     for (const auto& shader : *resourceManager::getShaders()) {
         // todo: move this to world
-        shader->setUniform("p", this->getWorld(0)->getPrimaryCamera()->getProjectionMatrix());
-        shader->setUniform("v", this->getWorld(0)->getPrimaryCamera()->getViewMatrix());
+        //shader->setUniform("p", this->getWorld(0)->getPrimaryCamera()->getProjectionMatrix());
+        //shader->setUniform("v", this->getWorld(0)->getPrimaryCamera()->getViewMatrix());
     }
+    */
 
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
@@ -236,9 +242,10 @@ void engine::render() {
     for (const auto& scriptProviderPair : this->scriptProviders) {
         scriptProviderPair.second->render(this->getDeltaTime());
     }
-    for (const auto& world : this->worlds) {
-        world->update(this);
-    }
+    // todo
+    //for (const auto& world : this->worlds) {
+    //    world->update(this);
+    //}
 
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -252,20 +259,24 @@ void engine::stop() {
     for (const auto& scriptProviderPair : this->scriptProviders) {
         scriptProviderPair.second->stop();
     }
-    for (const auto& world : this->worlds) {
-        world->deinit(this);
-    }
+    // todo
+    //for (const auto& world : this->worlds) {
+    //    world->deinit(this);
+    //}
 
     if (discordRichPresence::initialized()) {
         discordRichPresence::shutdown();
     }
 
+    // todo
+    /*
     for (const auto& texture : *resourceManager::getTextures()) {
-        texture->discard();
+        texture.second->discard();
     }
     for (const auto& shader : *resourceManager::getShaders()) {
-        shader->discard();
+        shader.second->discard();
     }
+    */
 
     this->soundManager->stop();
 
@@ -343,24 +354,6 @@ abstractSettingsLoader* engine::getSettingsLoader() {
         return nullptr;
     }
     return engine::settingsLoader.get();
-}
-
-unsigned int engine::addWorld(world* newWorld) {
-    this->worlds.emplace_back(newWorld);
-    return this->worlds.size() - 1;
-}
-
-world* engine::getWorld(unsigned int worldId) {
-    return this->worlds[worldId].get();
-}
-
-unsigned int engine::addEntity(entity* newEntity) {
-    this->entities.emplace_back(newEntity);
-    return this->entities.size() - 1;
-}
-
-entity* engine::getEntity(unsigned int entityId) {
-    return this->entities[entityId].get();
 }
 
 void engine::setBackgroundColor(float r, float g, float b, float a) {

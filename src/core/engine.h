@@ -1,6 +1,5 @@
 #pragma once
 
-#include "abstractEngine.h"
 #include "glad/gl.h"
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
@@ -8,28 +7,19 @@
 #include <functional>
 #include <vector>
 #include <memory>
-#include "../resource/shader.h"
-#include "../resource/texture.h"
 #include "../input/keybind.h"
 #include "../input/mousebind.h"
 #include "../loader/abstractSettingsLoader.h"
-#include "../entity/abstractCamera.h"
 #include "../script/abstractScriptProvider.h"
 #include "../script/angelscriptProvider.h"
 #include "../sound/abstractSoundManager.h"
 #include "../ui/console.h"
 #include "../utility/logger.h"
-#include "../world/world.h"
-#include "../entity/entity.h"
-#include "../resource/abstractResource.h"
-#include "../resource/material.h"
-#include "../component/abstractComponent.h"
-#include "../resource/mesh.h"
 
 class keybind;
 class mousebind;
 
-class engine : public abstractEngine {
+class engine {
 public:
     explicit engine(const std::string& configPath = "settings.json");
 
@@ -53,11 +43,6 @@ public:
 
     static void setSettingsLoader(abstractSettingsLoader* settingsLoader);
     static abstractSettingsLoader* getSettingsLoader();
-
-    unsigned int addWorld(world* newWorld);
-    world* getWorld(unsigned int worldId);
-    unsigned int addEntity(entity* newEntity);
-    entity* getEntity(unsigned int entityId);
 
     static void setBackgroundColor(float r, float g, float b, float a);
 
@@ -84,9 +69,6 @@ private:
     std::unique_ptr<abstractSoundManager> soundManager = nullptr;
 
     static inline std::unique_ptr<abstractSettingsLoader> settingsLoader = nullptr;
-
-    std::vector<std::unique_ptr<world>> worlds{};
-    std::vector<std::unique_ptr<entity>> entities{};
 
     bool started = false;
     bool mouseCaptured = false;

@@ -1,25 +1,20 @@
 #include "world.h"
 
-#include "../core/engine.h"
-
-void world::init(abstractEngine* e) {
-    auto* en = (engine*) e;
+void world::init(engine* e) {
     for (const auto& name : this->entities) {
-        en->getEntity(name)->init(e);
+        //e->getEntity(name)->init(e);
     }
 }
 
-void world::update(abstractEngine* e) {
-    auto* en = (engine*) e;
+void world::update(engine* e) {
     for (const auto& name : this->entities) {
-        en->getEntity(name)->update(e);
+        //e->getEntity(name)->update(e);
     }
 }
 
-void world::deinit(abstractEngine* e) {
-    auto* en = (engine*) e;
+void world::deinit(engine* e) {
     for (const auto& name : this->entities) {
-        en->getEntity(name)->update(e);
+        //e->getEntity(name)->update(e);
     }
 }
 
@@ -31,8 +26,8 @@ abstractCamera* world::getPrimaryCamera() const {
     return this->primaryCamera;
 }
 
-void world::setPrimaryCamera(abstractEngine* e, unsigned int entityId) {
-    this->primaryCamera = (abstractCamera*) (((engine*) e)->getEntity(entityId));
+void world::setPrimaryCamera(engine* e, unsigned int entityId) {
+    //this->primaryCamera = (abstractCamera*) (((engine*) e)->getEntity(entityId));
 }
 
 void world::addEntity(unsigned int entityId) {

@@ -2,7 +2,7 @@
 #include "../core/engine.h"
 #include "resourceManager.h"
 
-mesh::mesh(abstractMeshLoader* loader, const std::string& filepath_, unsigned int materialId, int depthFunc_, bool backfaceCulling_, int cullType_) : abstractResource(), model(1.0f), vertices(), indices() {
+mesh::mesh(abstractMeshLoader* loader, const std::string& filepath_, const uuids::uuid& materialId, int depthFunc_, bool backfaceCulling_, int cullType_) : abstractResource(), model(1.0f), vertices(), indices() {
     this->depthFunc = depthFunc_;
     this->backfaceCulling = backfaceCulling_;
     this->cullType = cullType_;
@@ -19,11 +19,11 @@ mesh::~mesh() {
     }
 }
 
-void mesh::setMaterial(unsigned int materialId) {
+void mesh::setMaterial(const uuids::uuid& materialId) {
     this->material = materialId;
 }
 
-unsigned int mesh::getMaterial() const {
+const uuids::uuid& mesh::getMaterial() const {
     return this->material;
 }
 

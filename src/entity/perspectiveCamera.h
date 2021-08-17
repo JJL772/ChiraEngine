@@ -7,10 +7,10 @@
 // Largely taken from https://learnopengl.com/Getting-started/Camera
 class perspectiveCamera : public abstractCamera {
 public:
-    explicit perspectiveCamera(abstractEngine* engine, float newYaw, float newPitch, glm::vec3 newPosition, glm::vec3 currentUp = glm::vec3(0.0f, 1.0f, 0.0f), float newZoom = 45.0f);
-    void init(abstractEngine* engine) override;
-    void update(abstractEngine* e) override {}
-    void deinit(abstractEngine* e) override {}
+    explicit perspectiveCamera(engine* e, float newYaw, float newPitch, glm::vec3 newPosition, glm::vec3 currentUp = glm::vec3(0.0f, 1.0f, 0.0f), float newZoom = 45.0f);
+    void init(engine* e) override;
+    void update(engine* e) override {}
+    void deinit(engine* e) override {}
     void translate(glm::vec3 offset, float amount, double delta) override;
     void translateLocal(signedAxis axis, float amount, double delta);
     void rotate(float rotation, axis rotationAxis, double delta) override;

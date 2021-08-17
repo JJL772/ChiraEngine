@@ -7,13 +7,14 @@
 #include "../resource/abstractResource.h"
 #include "../loader/abstractMeshLoader.h"
 #include "../resource/material.h"
+#include "../implementation/uuidProvider.h"
 
 class mesh : public abstractResource {
 public:
-    explicit mesh(abstractMeshLoader* loader, const std::string& filepath_, unsigned int materialId, int depthFunc_ = GL_LEQUAL, bool backfaceCulling_ = true, int cullType_ = GL_BACK);
+    explicit mesh(abstractMeshLoader* loader, const std::string& filepath_, const uuids::uuid& materialId, int depthFunc_ = GL_LEQUAL, bool backfaceCulling_ = true, int cullType_ = GL_BACK);
     virtual ~mesh();
-    void setMaterial(unsigned int materialId);
-    [[nodiscard]] unsigned int getMaterial() const;
+    void setMaterial(const uuids::uuid& materialId);
+    [[nodiscard]] const uuids::uuid& getMaterial() const;
     void compile() override;
     void render();
     void discard() override;
@@ -29,7 +30,8 @@ private:
     bool compiled = false;
     abstractMeshLoader* loader;
     std::string filepath;
-    unsigned int material, vboHandle = -1, vaoHandle = -1, eboHandle = -1;
+    uuids::uuid material;
+    unsigned int vboHandle = -1, vaoHandle = -1, eboHandle = -1;
     std::vector<vertex> vertices;
     std::vector<unsigned int> indices;
 };

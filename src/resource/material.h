@@ -5,14 +5,15 @@
 #include <memory>
 #include "shader.h"
 #include "abstractResource.h"
+#include "../implementation/uuidProvider.h"
 
 class material : public abstractResource {
 public:
-    explicit material(unsigned int shaderId);
+    explicit material(const uuids::uuid& shaderId);
     void compile() override {}
     virtual void use();
     void discard() override {}
-    [[nodiscard]] unsigned int getShader() const;
+    [[nodiscard]] const uuids::uuid& getShader() const;
 protected:
-    unsigned int shader;
+    uuids::uuid shader;
 };

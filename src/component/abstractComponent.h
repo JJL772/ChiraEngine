@@ -1,15 +1,17 @@
 #pragma once
 
+#include <uuid.h>
 #include <string>
-#include "../core/abstractEngine.h"
 
 class abstractComponent {
 public:
-    abstractComponent(const std::string& entity_, const std::string& name_);
-    virtual void init(abstractEngine* e) = 0;
-    virtual void update(abstractEngine* e) = 0;
-    virtual void deinit(abstractEngine* e) = 0;
+    abstractComponent(const uuids::uuid& entityId, const std::string& name_);
+    virtual void init() = 0;
+    virtual void update() = 0;
+    virtual void deinit() = 0;
+    [[nodiscard]] const uuids::uuid& getEntity() const;
+    const std::string& getName();
 private:
-    std::string entity;
+    uuids::uuid entity;
     std::string name;
 };

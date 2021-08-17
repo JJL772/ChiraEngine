@@ -1,15 +1,13 @@
 #include "freecam.h"
 
-#include "../core/engine.h"
-
-freecam::freecam(abstractEngine* engine, float newYaw, float newPitch, glm::vec3 newPosition, glm::vec3 currentUp, float newZoom, float newSpeed, float newSensitivity, bool controls) :
-                 perspectiveCamera(engine, newYaw, newPitch, newPosition, currentUp, newZoom), movementSpeed(newSpeed), mouseSensitivity(newSensitivity) {
+freecam::freecam(engine* e, float newYaw, float newPitch, glm::vec3 newPosition, glm::vec3 currentUp, float newZoom, float newSpeed, float newSensitivity, bool controls) :
+                 perspectiveCamera(e, newYaw, newPitch, newPosition, currentUp, newZoom), movementSpeed(newSpeed), mouseSensitivity(newSensitivity) {
     if (controls) {
-        this->setupKeybinds(engine);
+        this->setupKeybinds(e);
     }
 }
 
-void freecam::init(abstractEngine* e) {
+void freecam::init(engine* e) {
     perspectiveCamera::init(e);
     this->setActive(((engine*) e)->isMouseCaptured());
 }
@@ -27,41 +25,41 @@ void freecam::setActive(bool newActive) {
     this->capturedMouse = !this->capturedMouse;
 }
 
-void freecam::setupKeybinds(abstractEngine* e) const {
+void freecam::setupKeybinds(engine* e) const {
     // todo: get primary camera
-    auto* engine = (class engine*) e;
-    engine->addKeybind(keybind(GLFW_KEY_W, GLFW_REPEAT,[](class engine* e) {
-        auto* cam = (freecam*) e->getWorld(0)->getPrimaryCamera();
+    /*
+    e->addKeybind(keybind(GLFW_KEY_W, GLFW_REPEAT,[](engine* e) {
+        auto* cam = (freecam*) e->getWorldEntityManager()->getWorld(0)->getPrimaryCamera();
         if (cam->isCurrent() && cam->isActive()) cam->translateLocal(ZP, e->getDeltaTime());
     }));
-    engine->addKeybind(keybind(GLFW_KEY_S, GLFW_REPEAT,[](class engine* e) {
+    e->addKeybind(keybind(GLFW_KEY_S, GLFW_REPEAT,[](engine* e) {
         auto* cam = (freecam*) e->getWorld(0)->getPrimaryCamera();
         if (cam->isCurrent() && cam->isActive()) cam->translateLocal(ZN, e->getDeltaTime());
     }));
-    engine->addKeybind(keybind(GLFW_KEY_A, GLFW_REPEAT,[](class engine* e) {
+    e->addKeybind(keybind(GLFW_KEY_A, GLFW_REPEAT,[](engine* e) {
         auto* cam = (freecam*) e->getWorld(0)->getPrimaryCamera();
         if (cam->isCurrent() && cam->isActive()) cam->translateLocal(XP, e->getDeltaTime());
     }));
-    engine->addKeybind(keybind(GLFW_KEY_D, GLFW_REPEAT,[](class engine* e) {
+    e->addKeybind(keybind(GLFW_KEY_D, GLFW_REPEAT,[](engine* e) {
         auto* cam = (freecam*) e->getWorld(0)->getPrimaryCamera();
         if (cam->isCurrent() && cam->isActive()) cam->translateLocal(XN, e->getDeltaTime());
     }));
-    engine->addKeybind(keybind(GLFW_KEY_SPACE, GLFW_REPEAT,[](class engine* e) {
+    e->addKeybind(keybind(GLFW_KEY_SPACE, GLFW_REPEAT,[](engine* e) {
         auto* cam = (freecam*) e->getWorld(0)->getPrimaryCamera();
         if (cam->isCurrent() && cam->isActive()) cam->translateLocal(YP, e->getDeltaTime());
     }));
-    engine->addKeybind(keybind(GLFW_KEY_LEFT_SHIFT, GLFW_REPEAT,[](class engine* e) {
+    e->addKeybind(keybind(GLFW_KEY_LEFT_SHIFT, GLFW_REPEAT,[](class engine* e) {
         auto* cam = (freecam*) e->getWorld(0)->getPrimaryCamera();
         if (cam->isCurrent() && cam->isActive()) cam->translateLocal(YN, e->getDeltaTime());
     }));
-    engine->addMousebind(mousebind(MOVE, [this](class engine* e, double xOffset, double yOffset) {
+    e->addMousebind(mousebind(MOVE, [this](engine* e, double xOffset, double yOffset) {
         auto* cam = (freecam*) e->getWorld(0)->getPrimaryCamera();
         if (cam->isCurrent() && cam->isActive()) {
             xOffset *= this->mouseSensitivity;
             yOffset *= this->mouseSensitivity;
             cam->yaw += (float) xOffset;
             bool invertYAxis = false;
-            e->getSettingsLoader()->getValue("input", "invertYAxis", &invertYAxis);
+            engine::getSettingsLoader()->getValue("input", "invertYAxis", &invertYAxis);
             if (invertYAxis) {
                 cam->pitch += (float) yOffset;
             } else {
@@ -73,7 +71,7 @@ void freecam::setupKeybinds(abstractEngine* e) const {
                 cam->pitch = -89.5f;
         }
     }));
-    engine->addKeybind(keybind(GLFW_KEY_TAB, GLFW_PRESS, [](class engine* e) {
+    e->addKeybind(keybind(GLFW_KEY_TAB, GLFW_PRESS, [](class engine* e) {
         // todo: get primary camera
         auto* cam = (freecam*) e->getWorld(0)->getPrimaryCamera();
         if (cam->capturedMouse) {
@@ -84,4 +82,5 @@ void freecam::setupKeybinds(abstractEngine* e) const {
             cam->setActive(true);
         }
     }));
+    */
 }
