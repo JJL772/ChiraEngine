@@ -13,7 +13,7 @@ public:
     void compile() override {}
     virtual void use();
     void discard() override {}
-    [[nodiscard]] const uuids::uuid& getShader() const;
+    [[nodiscard]] std::weak_ptr<shader> getShader() const;
 protected:
-    uuids::uuid shader;
+    std::shared_ptr<shader> shaderPtr;
 };

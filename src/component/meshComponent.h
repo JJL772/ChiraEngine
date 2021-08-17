@@ -6,18 +6,19 @@
 #include <glm/glm.hpp>
 #include "../resource/abstractResource.h"
 #include "../loader/abstractMeshLoader.h"
+#include "abstractComponent.h"
 #include "../resource/material.h"
 #include "../implementation/uuidProvider.h"
 
-class mesh : public abstractResource {
+class meshComponent : public abstractComponent {
 public:
-    explicit mesh(abstractMeshLoader* loader, const std::string& filepath_, const uuids::uuid& materialId, int depthFunc_ = GL_LEQUAL, bool backfaceCulling_ = true, int cullType_ = GL_BACK);
-    virtual ~mesh();
+    explicit meshComponent(const uuids::uuid& entityId, const std::string& name, abstractMeshLoader* loader, const std::string& filepath_, const uuids::uuid& materialId, int depthFunc_ = GL_LEQUAL, bool backfaceCulling_ = true, int cullType_ = GL_BACK);
+    virtual ~meshComponent();
     void setMaterial(const uuids::uuid& materialId);
     [[nodiscard]] const uuids::uuid& getMaterial() const;
-    void compile() override;
-    void render();
-    void discard() override;
+    void init() override;
+    void update() override;
+    void deinit() override;
     glm::mat4* getModel() {
         return &(this->model);
     };

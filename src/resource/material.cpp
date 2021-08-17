@@ -3,13 +3,13 @@
 #include "resourceManager.h"
 
 material::material(const uuids::uuid& shaderId) : abstractResource() {
-    this->shader = shaderId;
+    this->shaderPtr = resourceManager::getShader(shaderId).lock();
 }
 
 void material::use() {
-    resourceManager::getShader(this->shader)->use();
+    this->shaderPtr->use();
 }
 
-const uuids::uuid& material::getShader() const {
-    return this->shader;
+std::weak_ptr<shader> material::getShader() const {
+    return this->shaderPtr;
 }

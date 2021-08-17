@@ -1,8 +1,9 @@
-#include "mesh.h"
+#include "meshComponent.h"
+#include "../resource/resourceManager.h"
 #include "../core/engine.h"
-#include "resourceManager.h"
 
-mesh::mesh(abstractMeshLoader* loader, const std::string& filepath_, const uuids::uuid& materialId, int depthFunc_, bool backfaceCulling_, int cullType_) : abstractResource(), model(1.0f), vertices(), indices() {
+meshComponent::meshComponent(const uuids::uuid& entityId, const std::string& name, abstractMeshLoader* loader, const std::string& filepath_, const uuids::uuid& materialId, int depthFunc_, bool backfaceCulling_, int cullType_):
+    abstractComponent(entityId, name), model(1.0f), vertices(), indices() {
     this->depthFunc = depthFunc_;
     this->backfaceCulling = backfaceCulling_;
     this->cullType = cullType_;
@@ -11,7 +12,7 @@ mesh::mesh(abstractMeshLoader* loader, const std::string& filepath_, const uuids
     this->material = materialId;
 }
 
-mesh::~mesh() {
+meshComponent::~meshComponent() {
     if (this->compiled) {
         glDeleteVertexArrays(1, &(this->vaoHandle));
         glDeleteBuffers(1, &(this->vboHandle));
@@ -19,15 +20,15 @@ mesh::~mesh() {
     }
 }
 
-void mesh::setMaterial(const uuids::uuid& materialId) {
+void meshComponent::setMaterial(const uuids::uuid& materialId) {
     this->material = materialId;
 }
 
-const uuids::uuid& mesh::getMaterial() const {
+const uuids::uuid& meshComponent::getMaterial() const {
     return this->material;
 }
 
-void mesh::compile() {
+void meshComponent::init() {
     if (this->compiled) return;
 
     this->loader->loadMesh(this->filepath, &this->vertices, &this->indices);
@@ -62,9 +63,9 @@ void mesh::compile() {
     this->compiled = true;
 }
 
-void mesh::render() {
-    resourceManager::getMaterial(this->material)->use();
-    resourceManager::getShader(resourceManager::getMaterial(this->material)->getShader())->setUniform("m", &(this->model));
+void meshComponent::update() {
+    resourceManager::getMaterial(this->material).lock()->use();
+    resourceManager::getShader(resourceManager::getMaterial(this->material).lock()->getShader()).lock()->setUniform("m", &(this->model));
 
     glDepthFunc(this->depthFunc);
     if (this->backfaceCulling) {
@@ -77,7 +78,7 @@ void mesh::render() {
     glDrawElements(GL_TRIANGLES, (int) this->indices.size(), GL_UNSIGNED_INT, nullptr);
 }
 
-void mesh::discard() {
+void meshComponent::deinit() {
     if (this->compiled) {
         glDeleteVertexArrays(1, &(this->vaoHandle));
         glDeleteBuffers(1, &(this->vboHandle));

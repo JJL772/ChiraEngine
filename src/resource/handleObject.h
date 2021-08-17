@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../resource/abstractResource.h"
+#include "abstractResource.h"
 
 class handleObject : public abstractResource {
 public:

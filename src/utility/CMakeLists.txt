@@ -1,6 +1,5 @@
 list(APPEND ENGINE_SOURCES
         ${CMAKE_CURRENT_LIST_DIR}/axis.h
-        ${CMAKE_CURRENT_LIST_DIR}/handleObject.h
         ${CMAKE_CURRENT_LIST_DIR}/light.cpp
         ${CMAKE_CURRENT_LIST_DIR}/light.h
         ${CMAKE_CURRENT_LIST_DIR}/logger.cpp
